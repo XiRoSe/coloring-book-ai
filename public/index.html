@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ספרון — ספרי פעילות AI לילדים</title>
+  <title>Sefer — ספרי פעילות AI לילדים</title>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -202,8 +202,8 @@
 
 <header>
   <a class="logo" href="#">
-    <div class="logo-mark">🖍️</div>
-    <div><div class="logo-name">ספרון</div><div class="logo-tag">ספרי פעילות AI לילדים</div></div>
+    <div class="logo-mark">📚</div>
+    <div><div class="logo-name">Sefer</div><div class="logo-tag">ספרי פעילות AI לילדים</div></div>
   </a>
   <div style="display:flex;align-items:center;gap:8px">
     <span class="badge" id="returning-badge" style="display:none;background:#8B5CF6;font-size:.68rem"></span>
@@ -433,7 +433,7 @@
   </div>
 </div>
 
-<footer>🖍️ <b>ספרון</b> — ספרי פעילות AI חינמיים לילדים &nbsp;·&nbsp; נוצר עם ❤️ ובינה מלאכותית</footer>
+<footer>📚 <b>Sefer</b> — ספרי פעילות AI חינמיים לילדים &nbsp;·&nbsp; נוצר עם ❤️ ובינה מלאכותית</footer>
 
 <script>
 // ── STATE ──
@@ -543,7 +543,7 @@ function showResults() {
       <img src="${u}" alt="עמוד ${i+1}" loading="lazy"/>
       <div class="page-card-foot">
         <span class="pc-num">עמוד ${i+1}</span>
-        <a href="${u}" download="tziyuri-${i+1}.png" class="pc-dl" onclick="event.stopPropagation()">⬇️</a>
+        <a href="${u}" download="sefer-${i+1}.png" class="pc-dl" onclick="event.stopPropagation()">⬇️</a>
       </div>
     </div>`).join('');
   document.getElementById('results').classList.add('show');
@@ -618,7 +618,7 @@ async function downloadPdf() {
     const themeEmoji = document.querySelector('.theme-card.active .tc-emoji')?.textContent || '📚';
 
     const frame = document.createElement('div');
-    frame.style.cssText = `position:fixed;left:-9999px;top:0;width:${W}px;overflow:hidden;background:white;font-family:Heebo,Arial,sans-serif;`;
+    frame.style.cssText = `position:absolute;left:-9999px;top:0;width:${W}px;overflow:hidden;background:white;font-family:Heebo,Arial,sans-serif;`;
     document.body.appendChild(frame);
 
     for (let i = 0; i < total; i++) {
@@ -638,22 +638,23 @@ async function downloadPdf() {
         <img src="${src}" style="width:100%;height:560px;object-fit:contain;display:block;border-radius:14px;background:#FAFAFA;"/>
         ${text ? `<p style="font-size:22px;line-height:1.9;color:#111827;margin-top:22px;text-align:right;font-weight:500;">${text}</p>` : ''}
         ${isLast && s?.moral ? `<div style="background:#FFFBEB;border:2px solid #FDE68A;border-radius:12px;padding:16px 20px;margin-top:16px;font-size:20px;font-weight:800;color:#92400E;direction:rtl;">⭐ ${s.moral}</div>` : ''}
-        <div style="position:absolute;bottom:22px;left:0;right:0;text-align:center;font-size:13px;color:#D1D5DB;direction:ltr;">🖍️ ספרון · siparon.app</div>
+        <div style="position:absolute;bottom:22px;left:0;right:0;text-align:center;font-size:13px;color:#D1D5DB;direction:ltr;">📚 Sefer · sefer.app</div>
       </div>`;
 
       await new Promise(res => {
         const img = frame.querySelector('img');
-        if (img.complete && img.naturalHeight) res();
-        else { img.onload = res; img.onerror = res; setTimeout(res, 10000); }
+        const done = () => setTimeout(res, 150); // small delay after load before canvas capture
+        if (img.complete && img.naturalHeight > 0) done();
+        else { img.onload = done; img.onerror = done; setTimeout(res, 12000); }
       });
 
-      const canvas = await html2canvas(frame.firstElementChild, { scale: 1, useCORS: true, allowTaint: false, backgroundColor: '#ffffff', width: W, height: H });
+      const canvas = await html2canvas(frame.firstElementChild, { scale: 1, useCORS: true, allowTaint: false, backgroundColor: '#ffffff', width: W, height: H, windowWidth: W, windowHeight: H });
       if (i > 0) doc.addPage();
       doc.addImage(canvas.toDataURL('image/jpeg', .92), 'JPEG', 0, 0, 595, 842);
     }
 
     document.body.removeChild(frame);
-    const fname = (s?.title || 'tziyuri').replace(/[^\u05D0-\u05EAa-zA-Z0-9 ]/g,'').trim().replace(/ +/g,'-');
+    const fname = (s?.title || 'sefer').replace(/[^\u05D0-\u05EAa-zA-Z0-9 ]/g,'').trim().replace(/ +/g,'-');
     doc.save(fname + '.pdf');
 
     // Save to server + localStorage
@@ -694,7 +695,7 @@ function setProg(p) { document.getElementById('prog-bar').style.width = p + '%';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // ── LOCAL STORAGE / USER TRACKING ──
-const LS_KEY = 'tziyuri_user';
+const LS_KEY = 'sefer_user';
 
 function getUserData() {
   try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch { return {}; }
