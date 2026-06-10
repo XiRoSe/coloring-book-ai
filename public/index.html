@@ -252,15 +252,17 @@
       /* Pages grid: 2 columns */
       .pages-grid{grid-template-columns:repeat(2,1fr);gap:8px}
 
-      /* Book viewer: full screen */
-      .book-overlay{padding:0;align-items:flex-end}
-      .book-modal{width:100%;max-height:96dvh;border-radius:20px 20px 0 0;overflow:hidden}
-      .bm-topbar{padding:14px 16px 10px}
-      .bm-title{font-size:.9rem}
-      .book-page{border-radius:0;max-height:none;overflow:visible}
-      .bp-img{max-height:55dvh;object-fit:contain}
-      .bp-story{padding:14px 16px}
-      .bp-text{font-size:1.05rem;line-height:1.9}
+      /* Book viewer: centered full-screen on mobile */
+      .book-overlay{padding:8px;align-items:center;justify-content:center}
+      .book-modal{width:100%;max-height:98dvh;border-radius:18px;overflow:hidden}
+      .bm-topbar{padding:12px 14px 10px}
+      .bm-title{font-size:.88rem}
+      .book-page{border-radius:0;max-height:calc(98dvh - 115px);overflow-y:auto}
+      .bp-img{max-height:52dvh;object-fit:contain}
+      .bp-cover{min-height:52dvh}
+      .bp-moral-page{min-height:52dvh}
+      .bp-story{padding:12px 14px}
+      .bp-text{font-size:1rem;line-height:1.85}
 
       /* Nav buttons: bigger */
       .bm-btn{width:50px;height:50px;font-size:1.2rem}
