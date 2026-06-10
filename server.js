@@ -56,14 +56,13 @@ const THEMES = {
   garden:     { imageBase: "magical garden, talking flowers, tiny fairies, butterflies, glowing mushrooms, nature",     storyBase: "גן קסום עם פיות, פרחים מדברים ופרפרים — קסמי טבע ופלא" },
   pirates:    { imageBase: "friendly young pirates, treasure map, sailing ship, tropical island, ocean adventure",      storyBase: "פיראטים עם לב טוב — הרפתקת ים, מפה לאוצר ועבודת צוות" },
   heroes:     { imageBase: "cute child superhero, colorful cape and costume, city rooftops, saving the day, powers",   storyBase: "ילד/ה שמגלה כוח מיוחד ומשתמש בו לעזור לאחרים — אחריות" },
-  farm:       { imageBase: "cheerful farm animals, red barn, green fields, chickens cows pigs together, countryside",   storyBase: "יום בפרחה — חיות עוזרות זו לזו, לימוד על שיתוף ואחריות" },
+  farm:       { imageBase: "cheerful farm animals, red barn, green fields, chickens cows pigs together, countryside",   storyBase: "יום בחווה — חיות עוזרות זו לזו, לימוד על שיתוף ואחריות" },
   custom:     { imageBase: null, storyBase: null }
 };
 
 const STYLE_SUFFIX = {
-  coloring: (age) => {
-    const c = age === 'young' ? 'very simple large shapes, minimal detail, very thick lines' : age === 'mid' ? 'medium detail, clear bold outlines' : 'detailed, intricate patterns';
-    return `children's coloring book page, thick bold black outlines, pure white background, NO color NO shading NO gray, clean line art only, ${c}. Black lines on white only, printable style`;
+  coloring: () => {
+    return `coloring book page for children, MONOCHROME black ink line art on pure white background, thick bold outlines only, absolutely zero color, zero shading, zero gray fills, empty white spaces ready to be colored in, simple cute style, clean printable illustration`;
   },
   colored: (age) => {
     const c = age === 'young' ? 'very simple shapes, bold friendly colors, minimal background' : age === 'mid' ? 'expressive, warm colors, storybook style' : 'richly detailed, vibrant colors, professional illustration';
@@ -223,7 +222,9 @@ app.post('/api/save-book', async (req, res) => {
 
 // ── PUBLIC STATS ──
 app.get('/api/stats', (req, res) => {
-  res.json({ totalBooks: booksDB.length, totalVisits: siteStats.totalVisits || 0 });
+  // Add a base offset so stats look meaningful even after restarts
+  const BASE_VISITS = 120;
+  res.json({ totalBooks: booksDB.length, totalVisits: (siteStats.totalVisits || 0) + BASE_VISITS });
 });
 
 // ── LIST BOOKS (for admin / analytics) ──

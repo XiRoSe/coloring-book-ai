@@ -389,7 +389,7 @@
 
       <button class="theme-card th-farm" data-theme="farm" onclick="pickTheme(this)">
         <span class="tc-emoji">🐄</span>
-        <div class="tc-name">הפרחה הגדולה</div>
+        <div class="tc-name">הפרה הגדולה</div>
         <div class="tc-tag">חיות, שדות ושיתוף פעולה</div>
       </button>
 
@@ -775,7 +775,14 @@ async function downloadPdf() {
     for (let i = 0; i < total; i++) {
       btn.textContent = `⏳ עמוד ${i+1}/${totalPages}...`;
       const text = s?.pages?.[i]?.text || '';
-      const src = `/api/proxy-image?url=${encodeURIComponent(urls[i])}`;
+
+      // Fetch image as blob URL — avoids all CORS issues with html2canvas
+      let blobUrl = '';
+      try {
+        const resp = await fetch(`/api/proxy-image?url=${encodeURIComponent(urls[i])}`);
+        const blob = await resp.blob();
+        blobUrl = URL.createObjectURL(blob);
+      } catch {}
 
       frame.innerHTML = `<div style="width:${W}px;height:${H}px;background:white;padding:38px 50px;box-sizing:border-box;direction:rtl;position:relative;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
@@ -785,7 +792,7 @@ async function downloadPdf() {
           </div>
           <div style="font-size:18px;font-weight:700;color:#9CA3AF;">${i+1} / ${totalPages}</div>
         </div>
-        <img src="${src}" style="width:100%;height:560px;object-fit:contain;display:block;border-radius:14px;background:#FAFAFA;" crossorigin="anonymous"/>
+        <img src="${blobUrl}" style="width:100%;height:560px;object-fit:contain;display:block;border-radius:14px;background:#FAFAFA;"/>
         ${text ? `<p style="font-size:22px;line-height:1.9;color:#111827;margin-top:22px;text-align:right;font-weight:500;">${text}</p>` : ''}
         <div style="position:absolute;bottom:22px;left:0;right:0;text-align:center;font-size:13px;color:#D1D5DB;direction:ltr;">📚 Sefer · sefer.app</div>
       </div>`;
@@ -793,13 +800,14 @@ async function downloadPdf() {
       await new Promise(r => {
         const img = frame.querySelector('img');
         const done = () => setTimeout(r, 200);
-        if (img.complete && img.naturalHeight > 0) done();
+        if (!blobUrl || (img.complete && img.naturalHeight > 0)) done();
         else { img.onload = done; img.onerror = done; setTimeout(r, 12000); }
       });
 
-      const canvas = await html2canvas(frame.firstElementChild, { scale: 1, useCORS: true, allowTaint: false, backgroundColor: '#ffffff', width: W, height: H, windowWidth: W, windowHeight: H });
+      const canvas = await html2canvas(frame.firstElementChild, { scale: 1, useCORS: false, allowTaint: true, backgroundColor: '#ffffff', width: W, height: H, windowWidth: W, windowHeight: H });
       doc.addPage();
       doc.addImage(canvas.toDataURL('image/jpeg', .92), 'JPEG', 0, 0, 595, 842);
+      if (blobUrl) URL.revokeObjectURL(blobUrl);
     }
 
     // ── MORAL PAGE (last page, numbered totalPages) ──
