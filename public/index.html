@@ -3,350 +3,198 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ציורי — ספרי פעילות לילדים עם סיפור</title>
+  <title>ציורי — ספרי פעילות לילדים</title>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --orange: #FF6B35;
-      --orange-light: #FFF0E8;
-      --orange-dark: #E85A26;
-      --yellow: #FFD93D;
-      --teal: #4ECDC4;
-      --purple: #8B5CF6;
-      --green: #10B981;
-      --bg: #FFFDF7;
-      --surface: #FFFFFF;
-      --text: #111827;
-      --text-2: #4B5563;
-      --text-3: #9CA3AF;
-      --border: #E5E7EB;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-      --shadow: 0 4px 16px rgba(0,0,0,0.08);
-      --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
-      --radius: 20px;
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --orange:#FF6B35;--orange-l:#FFF0E8;--orange-d:#E85A26;
+      --bg:#FFFDF7;--text:#111827;--text2:#4B5563;--text3:#9CA3AF;
+      --border:#E5E7EB;--shadow:0 4px 16px rgba(0,0,0,.08);--shadow-lg:0 12px 40px rgba(0,0,0,.13);
+      --r:18px;
     }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+    html{scroll-behavior:smooth}
+    body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
 
     /* ── HEADER ── */
-    header {
-      position: sticky; top: 0; z-index: 200;
-      background: rgba(255,253,247,0.92); backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      padding: 0 24px; height: 64px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .logo-mark {
-      width: 40px; height: 40px; border-radius: 12px;
-      background: linear-gradient(135deg, #FFD93D 0%, #FF6B35 100%);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.3rem; box-shadow: 0 3px 10px rgba(255,107,53,0.3);
-    }
-    .logo-text { font-size: 1.4rem; font-weight: 900; color: var(--text); letter-spacing: -0.5px; }
-    .logo-sub { font-size: 0.68rem; color: var(--text-3); font-weight: 600; letter-spacing: 0.04em; }
-    .header-right { display: flex; align-items: center; gap: 12px; }
-    .badge-free {
-      background: var(--green); color: white;
-      font-size: 0.7rem; font-weight: 800; padding: 4px 10px;
-      border-radius: 99px; letter-spacing: 0.05em;
-    }
+    header{position:sticky;top:0;z-index:200;background:rgba(255,253,247,.93);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px;height:62px;display:flex;align-items:center;justify-content:space-between}
+    .logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+    .logo-mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#FFD93D,#FF6B35);display:flex;align-items:center;justify-content:center;font-size:1.2rem;box-shadow:0 3px 10px rgba(255,107,53,.3)}
+    .logo-name{font-size:1.35rem;font-weight:900;color:var(--text);letter-spacing:-.5px}
+    .logo-tag{font-size:.66rem;color:var(--text3);font-weight:600}
+    .badge{background:#10B981;color:white;font-size:.68rem;font-weight:800;padding:4px 10px;border-radius:99px}
 
     /* ── HERO ── */
-    .hero {
-      padding: 72px 24px 60px;
-      text-align: center; position: relative; overflow: hidden;
-      background: linear-gradient(160deg, #FFFDF7 0%, #FFF5EC 50%, #FFFDF7 100%);
-    }
-    .hero-blob {
-      position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.5; pointer-events: none;
-    }
-    .blob-1 { width: 400px; height: 400px; background: #FFD93D; top: -100px; right: -100px; }
-    .blob-2 { width: 300px; height: 300px; background: #4ECDC4; bottom: -80px; left: -80px; }
-    .hero-eyebrow {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: var(--orange-light); color: var(--orange);
-      font-size: 0.8rem; font-weight: 700; padding: 5px 14px;
-      border-radius: 99px; margin-bottom: 20px;
-      border: 1.5px solid rgba(255,107,53,0.2);
-    }
-    .hero h1 {
-      font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 900;
-      color: var(--text); line-height: 1.15; letter-spacing: -1.5px;
-      margin-bottom: 20px; position: relative;
-    }
-    .hero h1 em { color: var(--orange); font-style: normal; }
-    .hero-sub {
-      font-size: clamp(0.95rem, 2vw, 1.15rem); color: var(--text-2);
-      max-width: 520px; margin: 0 auto 36px; line-height: 1.7; font-weight: 500;
-    }
-    .hero-cta {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: linear-gradient(135deg, var(--orange), var(--orange-dark));
-      color: white; font-size: 1.05rem; font-weight: 800;
-      padding: 16px 36px; border-radius: 99px; border: none; cursor: pointer;
-      font-family: 'Heebo', sans-serif;
-      box-shadow: 0 8px 28px rgba(255,107,53,0.4);
-      transition: all 0.2s; text-decoration: none;
-    }
-    .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(255,107,53,0.5); }
-    .hero-stats {
-      display: flex; gap: 32px; justify-content: center; margin-top: 40px;
-      flex-wrap: wrap;
-    }
-    .hero-stat { text-align: center; }
-    .hero-stat-num { font-size: 1.5rem; font-weight: 900; color: var(--text); }
-    .hero-stat-label { font-size: 0.75rem; color: var(--text-3); font-weight: 600; margin-top: 2px; }
-    .hero-preview {
-      display: flex; gap: 12px; justify-content: center; margin-top: 48px;
-      position: relative; z-index: 1;
-    }
-    .preview-card {
-      width: 120px; background: white; border-radius: 14px;
-      padding: 10px; box-shadow: var(--shadow-lg);
-      border: 1.5px solid rgba(0,0,0,0.06); transform: rotate(-3deg);
-      transition: transform 0.3s;
-    }
-    .preview-card:nth-child(2) { transform: rotate(0deg) translateY(-8px); }
-    .preview-card:nth-child(3) { transform: rotate(3deg); }
-    .preview-card:hover { transform: scale(1.05) rotate(0deg); }
-    .preview-card-img { width: 100%; aspect-ratio: 3/4; background: linear-gradient(135deg, #f3f4f6, #e5e7eb); border-radius: 8px; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
-    .preview-card-label { font-size: 0.65rem; font-weight: 700; color: var(--text-3); text-align: center; }
+    .hero{padding:64px 24px 48px;text-align:center;position:relative;overflow:hidden;background:linear-gradient(160deg,#FFFDF7,#FFF5EC 60%,#FFFDF7)}
+    .blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.45;pointer-events:none}
+    .b1{width:360px;height:360px;background:#FFD93D;top:-80px;right:-80px}
+    .b2{width:280px;height:280px;background:#4ECDC4;bottom:-60px;left:-60px}
+    .hero-tag{display:inline-flex;align-items:center;gap:6px;background:var(--orange-l);color:var(--orange);font-size:.78rem;font-weight:700;padding:5px 14px;border-radius:99px;margin-bottom:18px;border:1.5px solid rgba(255,107,53,.2)}
+    .hero h1{font-size:clamp(1.9rem,5vw,3.2rem);font-weight:900;line-height:1.15;letter-spacing:-1.5px;margin-bottom:18px}
+    .hero h1 em{color:var(--orange);font-style:normal}
+    .hero-sub{font-size:clamp(.92rem,2vw,1.1rem);color:var(--text2);max-width:500px;margin:0 auto 32px;line-height:1.7;font-weight:500}
+    .hero-cta{display:inline-flex;align-items:center;gap:9px;background:linear-gradient(135deg,var(--orange),var(--orange-d));color:white;font-size:1rem;font-weight:800;padding:14px 32px;border-radius:99px;border:none;cursor:pointer;font-family:'Heebo',sans-serif;box-shadow:0 8px 26px rgba(255,107,53,.4);transition:all .2s;text-decoration:none}
+    .hero-cta:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(255,107,53,.5)}
+    .hero-pills{display:flex;gap:20px;justify-content:center;margin-top:32px;flex-wrap:wrap}
+    .hero-pill{font-size:.78rem;color:var(--text3);font-weight:700;display:flex;align-items:center;gap:5px}
+    .hero-pill span{font-size:1rem}
 
-    /* ── HOW IT WORKS ── */
-    .how-section {
-      padding: 64px 24px; background: white;
-      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-    }
-    .section-title { font-size: 1.7rem; font-weight: 900; color: var(--text); text-align: center; margin-bottom: 8px; letter-spacing: -0.5px; }
-    .section-sub { font-size: 0.92rem; color: var(--text-2); text-align: center; margin-bottom: 40px; }
-    .how-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; max-width: 800px; margin: 0 auto; }
-    .how-step { text-align: center; }
-    .how-icon { width: 64px; height: 64px; border-radius: 20px; margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
-    .how-step:nth-child(1) .how-icon { background: #FFF0E8; }
-    .how-step:nth-child(2) .how-icon { background: #E0F7F6; }
-    .how-step:nth-child(3) .how-icon { background: #F3F0FF; }
-    .how-step:nth-child(4) .how-icon { background: #ECFDF5; }
-    .how-step h3 { font-size: 0.92rem; font-weight: 800; color: var(--text); margin-bottom: 5px; }
-    .how-step p { font-size: 0.8rem; color: var(--text-2); line-height: 1.6; }
+    /* ── HOW ── */
+    .how{padding:56px 24px;background:white;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+    .sec-title{font-size:1.55rem;font-weight:900;color:var(--text);text-align:center;letter-spacing:-.4px;margin-bottom:6px}
+    .sec-sub{font-size:.88rem;color:var(--text2);text-align:center;margin-bottom:36px}
+    .how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:20px;max-width:760px;margin:0 auto}
+    .how-item{text-align:center}
+    .how-icon{width:60px;height:60px;border-radius:18px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:1.7rem}
+    .hi1{background:#FFF0E8}.hi2{background:#E0F7F6}.hi3{background:#F3F0FF}.hi4{background:#ECFDF5}
+    .how-item h3{font-size:.88rem;font-weight:800;color:var(--text);margin-bottom:4px}
+    .how-item p{font-size:.76rem;color:var(--text2);line-height:1.55}
 
     /* ── CREATOR ── */
-    #creator { padding: 64px 24px 80px; max-width: 760px; margin: 0 auto; }
-    .creator-title { font-size: 1.8rem; font-weight: 900; color: var(--text); margin-bottom: 6px; letter-spacing: -0.5px; }
-    .creator-sub { font-size: 0.9rem; color: var(--text-2); margin-bottom: 36px; }
+    #creator{padding:56px 24px 80px;max-width:780px;margin:0 auto}
+    .creator-head{margin-bottom:32px}
+    .creator-title{font-size:1.65rem;font-weight:900;color:var(--text);letter-spacing:-.5px;margin-bottom:6px}
+    .creator-sub{font-size:.88rem;color:var(--text2)}
 
-    /* ── FORM GROUPS ── */
-    .form-group { margin-bottom: 28px; }
-    .form-label { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 800; color: var(--text); margin-bottom: 12px; }
-    .form-label-num {
-      width: 26px; height: 26px; border-radius: 50%;
-      background: var(--orange); color: white;
-      font-size: 0.75rem; font-weight: 900;
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
+    /* Step labels */
+    .step-label{display:flex;align-items:center;gap:8px;font-size:.88rem;font-weight:800;color:var(--text);margin-bottom:14px}
+    .step-num{width:24px;height:24px;border-radius:50%;background:var(--orange);color:white;font-size:.72rem;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 
-    .subject-input {
-      width: 100%; padding: 16px 20px; border-radius: 14px;
-      border: 2px solid var(--border); background: white;
-      font-family: 'Heebo', sans-serif; font-size: 1rem; color: var(--text);
-      transition: border-color 0.15s, box-shadow 0.15s; direction: rtl;
-    }
-    .subject-input:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255,107,53,0.1); }
-    .subject-input::placeholder { color: var(--text-3); }
+    /* ── THEME CARDS ── */
+    .themes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+    .theme-card{border-radius:16px;border:2px solid var(--border);padding:18px 12px 14px;cursor:pointer;text-align:center;transition:all .16s;background:white;font-family:'Heebo',sans-serif;position:relative;overflow:hidden}
+    .theme-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .16s}
+    .theme-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:#D1D5DB}
+    .theme-card.active{border-width:2.5px;box-shadow:0 4px 18px rgba(0,0,0,.12)}
+    .theme-card.active::after{content:'✓';position:absolute;top:8px;left:8px;width:20px;height:20px;border-radius:50%;background:rgba(0,0,0,.18);color:white;font-size:.65rem;font-weight:900;display:flex;align-items:center;justify-content:center;line-height:20px}
+    .tc-emoji{font-size:2.2rem;display:block;margin-bottom:8px;line-height:1}
+    .tc-name{font-size:.82rem;font-weight:800;color:var(--text);margin-bottom:3px;line-height:1.2}
+    .tc-tag{font-size:.65rem;color:var(--text3);line-height:1.35}
+    .theme-card.active .tc-tag{opacity:.8}
 
-    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-    .chip {
-      padding: 7px 16px; border-radius: 99px;
-      border: 1.5px solid var(--border); background: white;
-      font-size: 0.82rem; font-weight: 600; color: var(--text-2);
-      cursor: pointer; transition: all 0.14s; font-family: 'Heebo', sans-serif;
-    }
-    .chip:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-light); }
-    .chip.active { border-color: var(--orange); color: var(--orange); background: var(--orange-light); font-weight: 700; }
+    /* Theme colors */
+    .th-jungle{--tc:#16A34A;--tcl:#DCFCE7} .th-space{--tc:#6366F1;--tcl:#EEF2FF} .th-ocean{--tc:#0891B2;--tcl:#ECFEFF}
+    .th-dragon{--tc:#D97706;--tcl:#FEF3C7} .th-princess{--tc:#DB2777;--tcl:#FCE7F3} .th-dinos{--tc:#059669;--tcl:#D1FAE5}
+    .th-garden{--tc:#7C3AED;--tcl:#EDE9FE} .th-pirates{--tc:#B45309;--tcl:#FEF3C7} .th-heroes{--tc:#DC2626;--tcl:#FEE2E2}
+    .th-farm{--tc:#CA8A04;--tcl:#FEF9C3} .th-custom{--tc:#6B7280;--tcl:#F3F4F6}
+    .theme-card::before{background:var(--tcl)}
+    .theme-card.active{background:var(--tcl);border-color:var(--tc)}
+    .theme-card.active .tc-tag{color:var(--tc)}
+    .theme-card.active::after{background:var(--tc)}
 
-    .option-grid { display: grid; gap: 10px; }
-    .option-grid-3 { grid-template-columns: repeat(3, 1fr); }
-    .option-grid-2 { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
-    .option-card {
-      padding: 16px 12px; border-radius: 16px;
-      border: 2px solid var(--border); background: white;
-      cursor: pointer; text-align: center; transition: all 0.15s;
-      font-family: 'Heebo', sans-serif;
-    }
-    .option-card:hover { border-color: #d1d5db; transform: translateY(-1px); box-shadow: var(--shadow-sm); }
-    .option-card.active { border-color: var(--orange); background: var(--orange-light); box-shadow: 0 4px 16px rgba(255,107,53,0.15); }
-    .option-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
-    .option-name { font-size: 0.85rem; font-weight: 800; color: var(--text); }
-    .option-desc { font-size: 0.7rem; color: var(--text-3); margin-top: 3px; line-height: 1.4; }
-    .option-card.active .option-desc { color: var(--orange-dark); opacity: 0.8; }
+    /* Custom input */
+    .custom-input-wrap{display:none;margin-top:10px}
+    .custom-input-wrap.show{display:block}
+    .custom-input{width:100%;padding:14px 18px;border-radius:13px;border:2px solid var(--border);font-family:'Heebo',sans-serif;font-size:.95rem;color:var(--text);direction:rtl;transition:border-color .15s,box-shadow .15s;background:white}
+    .custom-input:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px rgba(255,107,53,.1)}
+    .custom-input::placeholder{color:var(--text3)}
 
-    .count-row { display: flex; gap: 8px; flex-wrap: wrap; }
-    .count-btn {
-      padding: 10px 24px; border-radius: 99px;
-      border: 2px solid var(--border); background: white;
-      font-size: 0.85rem; font-weight: 700; cursor: pointer;
-      color: var(--text-2); font-family: 'Heebo', sans-serif; transition: all 0.14s;
-    }
-    .count-btn:hover { border-color: #9CA3AF; color: var(--text); }
-    .count-btn.active { border-color: var(--orange); background: var(--orange-light); color: var(--orange); }
+    /* ── OPTION GRID (activity / age) ── */
+    .opt-grid{display:grid;gap:9px}
+    .og3{grid-template-columns:repeat(3,1fr)}
+    .og3b{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+    .opt-card{padding:14px 10px;border-radius:14px;border:2px solid var(--border);background:white;cursor:pointer;text-align:center;transition:all .14s;font-family:'Heebo',sans-serif}
+    .opt-card:hover{border-color:#d1d5db;transform:translateY(-1px)}
+    .opt-card.active{border-color:var(--orange);background:var(--orange-l);box-shadow:0 3px 14px rgba(255,107,53,.15)}
+    .oc-icon{font-size:1.8rem;display:block;margin-bottom:6px}
+    .oc-name{font-size:.82rem;font-weight:800;color:var(--text)}
+    .oc-desc{font-size:.67rem;color:var(--text3);margin-top:2px;line-height:1.3}
+    .opt-card.active .oc-desc{color:var(--orange-d);opacity:.85}
 
-    .divider { height: 1px; background: var(--border); margin: 28px 0; }
+    /* Count pills */
+    .count-row{display:flex;gap:7px;flex-wrap:wrap}
+    .count-btn{padding:9px 22px;border-radius:99px;border:2px solid var(--border);background:white;font-size:.83rem;font-weight:700;cursor:pointer;color:var(--text2);font-family:'Heebo',sans-serif;transition:all .14s}
+    .count-btn:hover{border-color:#9CA3AF;color:var(--text)}
+    .count-btn.active{border-color:var(--orange);background:var(--orange-l);color:var(--orange)}
 
-    .btn-generate {
-      width: 100%; padding: 20px; border-radius: 16px; border: none;
-      background: linear-gradient(135deg, var(--orange) 0%, #E85A26 100%);
-      color: white; font-family: 'Heebo', sans-serif;
-      font-size: 1.1rem; font-weight: 900; cursor: pointer;
-      box-shadow: 0 8px 24px rgba(255,107,53,0.4);
-      transition: all 0.2s; letter-spacing: 0.02em;
-      display: flex; align-items: center; justify-content: center; gap: 12px;
-    }
-    .btn-generate:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(255,107,53,0.5); }
-    .btn-generate:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+    .fg{margin-bottom:26px}
+    .divider{height:1px;background:var(--border);margin:24px 0}
+
+    /* ── GENERATE BUTTON ── */
+    .btn-gen{width:100%;padding:19px;border-radius:15px;border:none;background:linear-gradient(135deg,var(--orange),var(--orange-d));color:white;font-family:'Heebo',sans-serif;font-size:1.05rem;font-weight:900;cursor:pointer;box-shadow:0 8px 24px rgba(255,107,53,.4);transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px}
+    .btn-gen:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 34px rgba(255,107,53,.5)}
+    .btn-gen:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
 
     /* ── LOADING ── */
-    .loading-section {
-      display: none; padding: 60px 24px; text-align: center;
-      border-radius: var(--radius); background: white;
-      border: 1.5px solid var(--border); box-shadow: var(--shadow); margin-top: 24px;
-    }
-    .loading-section.show { display: block; }
-    .loading-crayon { font-size: 4rem; display: inline-block; animation: crayonDraw 0.5s ease-in-out infinite alternate; }
-    @keyframes crayonDraw {
-      from { transform: rotate(-12deg) translateX(-5px); }
-      to   { transform: rotate(12deg) translateX(5px); }
-    }
-    .loading-title { font-size: 1.2rem; font-weight: 900; color: var(--text); margin: 20px 0 6px; }
-    .loading-sub { font-size: 0.85rem; color: var(--text-2); }
-    .loading-steps { display: flex; gap: 8px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
-    .loading-step {
-      padding: 6px 14px; border-radius: 99px; font-size: 0.75rem; font-weight: 700;
-      background: #F3F4F6; color: var(--text-3); transition: all 0.4s;
-    }
-    .loading-step.done { background: #ECFDF5; color: #059669; }
-    .loading-step.active { background: var(--orange-light); color: var(--orange); }
-    .progress-track { background: #F3F4F6; border-radius: 99px; height: 8px; max-width: 320px; margin: 20px auto 0; overflow: hidden; }
-    .progress-bar { height: 100%; background: linear-gradient(90deg, var(--yellow), var(--orange)); border-radius: 99px; width: 0; transition: width 0.6s ease; }
+    .loading{display:none;padding:52px 24px;text-align:center;border-radius:var(--r);background:white;border:1.5px solid var(--border);box-shadow:var(--shadow);margin-top:22px}
+    .loading.show{display:block}
+    .l-crayon{font-size:3.6rem;display:inline-block;animation:cr .5s ease-in-out infinite alternate}
+    @keyframes cr{from{transform:rotate(-13deg) translateX(-5px)}to{transform:rotate(13deg) translateX(5px)}}
+    .l-title{font-size:1.1rem;font-weight:900;color:var(--text);margin:18px 0 5px}
+    .l-sub{font-size:.82rem;color:var(--text2)}
+    .l-steps{display:flex;gap:7px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+    .l-step{padding:5px 13px;border-radius:99px;font-size:.73rem;font-weight:700;background:#F3F4F6;color:var(--text3);transition:all .4s}
+    .l-step.done{background:#ECFDF5;color:#059669}
+    .l-step.active{background:var(--orange-l);color:var(--orange)}
+    .prog-track{background:#F3F4F6;border-radius:99px;height:7px;max-width:300px;margin:18px auto 0;overflow:hidden}
+    .prog-bar{height:100%;background:linear-gradient(90deg,#FFD93D,var(--orange));border-radius:99px;width:0;transition:width .6s ease}
 
     /* ── RESULTS ── */
-    .results-section { display: none; margin-top: 24px; }
-    .results-section.show { display: block; }
+    .results{display:none;margin-top:22px}
+    .results.show{display:block}
 
-    .book-banner {
-      background: linear-gradient(135deg, #1E1E2E 0%, #2d2d44 100%);
-      border-radius: var(--radius); padding: 28px 32px;
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 20px; flex-wrap: wrap; margin-bottom: 20px; box-shadow: var(--shadow-lg);
-    }
-    .book-banner-left { flex: 1; min-width: 200px; }
-    .book-banner-title { font-size: 1.3rem; font-weight: 900; color: white; margin-bottom: 4px; }
-    .book-banner-sub { font-size: 0.83rem; color: rgba(255,255,255,0.55); }
-    .story-status-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 0.75rem; font-weight: 700; margin-top: 10px;
-      padding: 4px 12px; border-radius: 99px;
-    }
-    .story-loading-badge { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
-    .story-ready-badge { background: rgba(16,185,129,0.2); color: #6EE7B7; }
-    .book-banner-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-    .btn-book {
-      padding: 12px 20px; border-radius: 12px; border: none;
-      font-family: 'Heebo', sans-serif; font-size: 0.88rem; font-weight: 800;
-      cursor: pointer; display: flex; align-items: center; gap: 8px;
-      transition: all 0.15s; white-space: nowrap;
-    }
-    .btn-book-primary { background: var(--orange); color: white; box-shadow: 0 4px 16px rgba(255,107,53,0.35); }
-    .btn-book-primary:hover { background: var(--orange-dark); transform: translateY(-1px); }
-    .btn-book-secondary { background: rgba(255,255,255,0.12); color: white; border: 1.5px solid rgba(255,255,255,0.2); }
-    .btn-book-secondary:hover { background: rgba(255,255,255,0.22); }
-    .btn-book:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+    .book-banner{background:linear-gradient(135deg,#1a1a2e,#2d2d44);border-radius:var(--r);padding:24px 28px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px;box-shadow:var(--shadow-lg)}
+    .bb-left{flex:1;min-width:180px}
+    .bb-title{font-size:1.2rem;font-weight:900;color:white;margin-bottom:4px}
+    .bb-sub{font-size:.8rem;color:rgba(255,255,255,.5)}
+    .story-badge{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;font-weight:700;margin-top:9px;padding:3px 10px;border-radius:99px}
+    .sb-loading{background:rgba(255,255,255,.1);color:rgba(255,255,255,.65)}
+    .sb-ready{background:rgba(16,185,129,.2);color:#6EE7B7}
+    .bb-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .btn-bb{padding:11px 18px;border-radius:11px;border:none;font-family:'Heebo',sans-serif;font-size:.85rem;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:7px;transition:all .14s;white-space:nowrap}
+    .bb-primary{background:var(--orange);color:white;box-shadow:0 4px 14px rgba(255,107,53,.35)}
+    .bb-primary:hover{background:var(--orange-d);transform:translateY(-1px)}
+    .bb-secondary{background:rgba(255,255,255,.11);color:white;border:1.5px solid rgba(255,255,255,.18)}
+    .bb-secondary:hover{background:rgba(255,255,255,.2)}
+    .btn-bb:disabled{opacity:.45;cursor:not-allowed;transform:none}
 
-    .pages-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-    .pages-header-title { font-size: 0.9rem; font-weight: 800; color: var(--text); }
-    .btn-regen { padding: 8px 16px; border-radius: 99px; border: 1.5px solid var(--border); background: white; font-size: 0.78rem; font-weight: 700; color: var(--text-2); cursor: pointer; font-family: 'Heebo', sans-serif; transition: all 0.12s; }
-    .btn-regen:hover { border-color: var(--orange); color: var(--orange); }
+    .pg-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .pg-title{font-size:.88rem;font-weight:800;color:var(--text)}
+    .btn-regen{padding:7px 14px;border-radius:99px;border:1.5px solid var(--border);background:white;font-size:.75rem;font-weight:700;color:var(--text2);cursor:pointer;font-family:'Heebo',sans-serif;transition:all .12s}
+    .btn-regen:hover{border-color:var(--orange);color:var(--orange)}
 
-    .pages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
-    .page-card {
-      background: white; border-radius: 16px; border: 1.5px solid var(--border);
-      overflow: hidden; box-shadow: var(--shadow-sm); transition: all 0.2s; cursor: pointer;
-    }
-    .page-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--orange); }
-    .page-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
-    .page-card-footer { padding: 8px 10px; display: flex; align-items: center; justify-content: space-between; }
-    .page-card-num { font-size: 0.72rem; font-weight: 700; color: var(--text-3); }
-    .page-card-dl { font-size: 0.72rem; color: var(--orange); font-weight: 700; text-decoration: none; }
+    .pages-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:11px}
+    .page-card{background:white;border-radius:14px;border:1.5px solid var(--border);overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);transition:all .18s;cursor:pointer}
+    .page-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:var(--orange)}
+    .page-card img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block}
+    .page-card-foot{padding:7px 10px;display:flex;align-items:center;justify-content:space-between}
+    .pc-num{font-size:.7rem;font-weight:700;color:var(--text3)}
+    .pc-dl{font-size:.7rem;color:var(--orange);font-weight:700;text-decoration:none}
 
-    .print-tip {
-      background: #FFFBEB; border: 1.5px solid #FDE68A; border-radius: 12px;
-      padding: 12px 16px; display: flex; gap: 10px; align-items: flex-start; margin-top: 16px;
-    }
-    .print-tip-text { font-size: 0.78rem; color: #92400E; line-height: 1.6; }
+    .print-tip{background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:11px;padding:11px 14px;display:flex;gap:9px;align-items:flex-start;margin-top:14px}
+    .pt-text{font-size:.76rem;color:#92400E;line-height:1.55}
 
     /* ── BOOK VIEWER ── */
-    .book-overlay {
-      display: none; position: fixed; inset: 0; z-index: 500;
-      background: rgba(10,8,20,0.95); backdrop-filter: blur(12px);
-      align-items: center; justify-content: center; padding: 16px;
-    }
-    .book-overlay.open { display: flex; }
-    .book-modal {
-      display: flex; flex-direction: column; align-items: center;
-      width: min(460px, 96vw); max-height: 96vh;
-    }
-    .book-topbar {
-      width: 100%; display: flex; align-items: center; justify-content: space-between;
-      padding: 0 4px 14px;
-    }
-    .book-modal-title { color: white; font-size: 1rem; font-weight: 800; flex: 1; }
-    .book-close-btn {
-      width: 36px; height: 36px; border-radius: 50%; border: none;
-      background: rgba(255,255,255,0.12); color: white; font-size: 1rem;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      transition: background 0.15s; flex-shrink: 0; margin-right: -4px;
-    }
-    .book-close-btn:hover { background: rgba(255,255,255,0.25); }
-    .book-page-wrapper {
-      width: 100%; background: white; border-radius: 20px;
-      overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.7);
-      max-height: calc(96vh - 100px); overflow-y: auto;
-    }
-    .book-page-img { width: 100%; aspect-ratio: 3/4; object-fit: contain; display: block; background: #fafafa; }
-    .book-page-story { padding: 18px 22px; direction: rtl; border-top: 1px solid #f0f0f0; }
-    .book-page-text { font-size: 1rem; line-height: 1.85; color: var(--text); font-weight: 500; }
-    .book-page-moral {
-      display: none; margin-top: 12px; padding: 12px 16px;
-      background: #FFFBEB; border: 1.5px solid #FDE68A;
-      border-radius: 12px; font-size: 0.85rem; font-weight: 700; color: #92400E; line-height: 1.6;
-    }
-    .book-page-moral.show { display: block; }
-    .book-nav-bar { display: flex; align-items: center; gap: 16px; margin-top: 16px; }
-    .book-nav-btn {
-      width: 46px; height: 46px; border-radius: 50%; border: none;
-      background: rgba(255,255,255,0.14); color: white; font-size: 1.1rem;
-      cursor: pointer; display: flex; align-items: center; justify-content: center;
-      transition: all 0.15s;
-    }
-    .book-nav-btn:hover:not(:disabled) { background: rgba(255,255,255,0.28); }
-    .book-nav-btn:disabled { opacity: 0.2; cursor: not-allowed; }
-    .book-dots { display: flex; gap: 6px; }
-    .book-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.25); cursor: pointer; transition: all 0.15s; }
-    .book-dot.active { background: white; transform: scale(1.3); }
+    .book-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(8,6,18,.95);backdrop-filter:blur(14px);align-items:center;justify-content:center;padding:16px}
+    .book-overlay.open{display:flex}
+    .book-modal{display:flex;flex-direction:column;align-items:center;width:min(450px,95vw);max-height:95vh}
+    .bm-topbar{width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 2px 12px}
+    .bm-title{color:white;font-size:.95rem;font-weight:800;flex:1}
+    .bm-close{width:34px;height:34px;border-radius:50%;border:none;background:rgba(255,255,255,.12);color:white;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .14s}
+    .bm-close:hover{background:rgba(255,255,255,.25)}
+    .book-page{width:100%;background:white;border-radius:18px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.65);max-height:calc(95vh - 100px);overflow-y:auto}
+    .bp-img{width:100%;aspect-ratio:3/4;object-fit:contain;display:block;background:#fafafa}
+    .bp-story{padding:16px 20px;direction:rtl;border-top:1px solid #f0f0f0}
+    .bp-text{font-size:.98rem;line-height:1.85;color:var(--text);font-weight:500}
+    .bp-moral{display:none;margin-top:11px;padding:11px 14px;background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:10px;font-size:.83rem;font-weight:700;color:#92400E;line-height:1.55}
+    .bp-moral.show{display:block}
+    .bm-nav{display:flex;align-items:center;gap:14px;margin-top:14px}
+    .bm-btn{width:44px;height:44px;border-radius:50%;border:none;background:rgba(255,255,255,.13);color:white;font-size:1.05rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .14s}
+    .bm-btn:hover:not(:disabled){background:rgba(255,255,255,.26)}
+    .bm-btn:disabled{opacity:.2;cursor:not-allowed}
+    .bm-dots{display:flex;gap:5px}
+    .bm-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.22);cursor:pointer;transition:all .14s}
+    .bm-dot.active{background:white;transform:scale(1.3)}
 
-    /* ── FOOTER ── */
-    footer { text-align: center; padding: 40px 24px; color: var(--text-3); font-size: 0.78rem; border-top: 1px solid var(--border); }
+    footer{text-align:center;padding:36px 24px;color:var(--text3);font-size:.76rem;border-top:1px solid var(--border)}
 
-    @media (max-width: 520px) {
-      .option-grid-3 { grid-template-columns: 1fr 1fr; }
-      .option-grid-3 .option-card:last-child { grid-column: 1 / -1; }
-      .book-banner { flex-direction: column; }
-      .hero { padding: 48px 20px 40px; }
-      .hero-preview { gap: 8px; }
-      .preview-card { width: 90px; }
-      .hero-stats { gap: 20px; }
+    @media(max-width:520px){
+      .og3{grid-template-columns:1fr 1fr}
+      .og3 .opt-card:last-child{grid-column:1/-1}
+      .book-banner{flex-direction:column}
+      .themes-grid{grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
     }
   </style>
 </head>
@@ -355,111 +203,156 @@
 <header>
   <a class="logo" href="#">
     <div class="logo-mark">🖍️</div>
-    <div>
-      <div class="logo-text">ציורי</div>
-      <div class="logo-sub">ספרי פעילות לילדים</div>
-    </div>
+    <div><div class="logo-name">ציורי</div><div class="logo-tag">ספרי פעילות לילדים</div></div>
   </a>
-  <div class="header-right">
-    <span class="badge-free">✨ חינמי לגמרי</span>
-  </div>
+  <span class="badge">✨ חינמי לגמרי</span>
 </header>
 
+<!-- Hero -->
 <section class="hero">
-  <div class="hero-blob blob-1"></div>
-  <div class="hero-blob blob-2"></div>
-  <div class="hero-eyebrow">🌟 AI + דמיון = קסם לילדים</div>
+  <div class="blob b1"></div><div class="blob b2"></div>
+  <div class="hero-tag">🌟 AI + יצירתיות = ספר אמיתי לילד שלכם</div>
   <h1>ספרי פעילות <em>עם סיפור</em><br/>לילדים שלכם</h1>
-  <p class="hero-sub">בחרו נושא, לחצו צור — ותוך שניות תקבלו ספר פעילות מותאם אישית עם איורים, סיפור, עלילה ומוסר השכל לפי גיל הילד</p>
+  <p class="hero-sub">בחרו עולם סיפורי, לחצו צור — ותוך שניות תקבלו ספר פעילות מותאם אישית עם איורים, עלילה ומוסר השכל לפי גיל הילד</p>
   <a href="#creator" class="hero-cta">✏️ צרו ספר עכשיו — בחינם</a>
-  <div class="hero-stats">
-    <div class="hero-stat"><div class="hero-stat-num">3 סוגים</div><div class="hero-stat-label">צביעה · נקודות · מבוך</div></div>
-    <div class="hero-stat"><div class="hero-stat-num">כל גיל</div><div class="hero-stat-label">2–12 שנים</div></div>
-    <div class="hero-stat"><div class="hero-stat-num">סיפור + PDF</div><div class="hero-stat-label">מוכן להדפסה</div></div>
-  </div>
-  <div class="hero-preview">
-    <div class="preview-card"><div class="preview-card-img">🦁</div><div class="preview-card-label">אריה האמיץ</div></div>
-    <div class="preview-card"><div class="preview-card-img">🧜</div><div class="preview-card-label">בת ים בים</div></div>
-    <div class="preview-card"><div class="preview-card-img">🚀</div><div class="preview-card-label">המסע לחלל</div></div>
+  <div class="hero-pills">
+    <div class="hero-pill"><span>🎨</span> צביעה · נקודות · מבוך</div>
+    <div class="hero-pill"><span>📖</span> סיפור + מוסר השכל בעברית</div>
+    <div class="hero-pill"><span>🖨️</span> PDF להדפסה מיידית</div>
   </div>
 </section>
 
-<section class="how-section">
-  <h2 class="section-title">איך זה עובד?</h2>
-  <p class="section-sub">ארבעה צעדים פשוטים לספר שלם</p>
+<!-- How it works -->
+<section class="how">
+  <h2 class="sec-title">איך זה עובד?</h2>
+  <p class="sec-sub">ארבעה צעדים לספר שלם</p>
   <div class="how-grid">
-    <div class="how-step"><div class="how-icon">✏️</div><h3>בחרו נושא</h3><p>אריה, פרפר, חלל — כל מה שדמיונכם מציע</p></div>
-    <div class="how-step"><div class="how-icon">🎨</div><h3>בחרו סוג</h3><p>דף צביעה, חיבור נקודות, או מבוך</p></div>
-    <div class="how-step"><div class="how-icon">✨</div><h3>AI יוצר הכל</h3><p>איורים + סיפור + מוסר השכל מותאם לגיל</p></div>
-    <div class="how-step"><div class="how-icon">🖨️</div><h3>הורידו והדפיסו</h3><p>PDF מוכן — פשוט לחצו הדפס</p></div>
+    <div class="how-item"><div class="how-icon hi1">🌍</div><h3>בחרו עולם</h3><p>בחרו את הז'אנר והעולם הסיפורי שיעניין את הילד</p></div>
+    <div class="how-item"><div class="how-icon hi2">🎨</div><h3>בחרו פעילות</h3><p>צביעה, חיבור נקודות או מבוך</p></div>
+    <div class="how-item"><div class="how-icon hi3">✨</div><h3>AI יוצר הכל</h3><p>איורים ייחודיים + סיפור עם עלילה ומוסר השכל</p></div>
+    <div class="how-item"><div class="how-icon hi4">🖨️</div><h3>הורידו PDF</h3><p>ספר מוכן להדפסה על A4 רגיל</p></div>
   </div>
 </section>
 
+<!-- Creator -->
 <section id="creator">
-  <h2 class="creator-title">צרו ספר חדש</h2>
-  <p class="creator-sub">כל ספר נוצר עם AI ומכיל איורים ייחודיים + סיפור בעברית + מוסר השכל לפי הגיל</p>
-
-  <div class="form-group">
-    <div class="form-label"><span class="form-label-num">1</span> מה הנושא של הספר?</div>
-    <div class="chips" id="theme-chips">
-      <button class="chip" onclick="pickTheme(this,'אריה חמוד בג\'ונגל')">🦁 אריה</button>
-      <button class="chip" onclick="pickTheme(this,'פיל קטן עם חברים')">🐘 פיל</button>
-      <button class="chip" onclick="pickTheme(this,'פרפר בגינה פורחת')">🦋 פרפר</button>
-      <button class="chip" onclick="pickTheme(this,'בת ים מתחת לים')">🧜 בת ים</button>
-      <button class="chip" onclick="pickTheme(this,'חללאי בחלל הגדול')">🚀 חלל</button>
-      <button class="chip" onclick="pickTheme(this,'דרקון ידידותי')">🐉 דרקון</button>
-      <button class="chip" onclick="pickTheme(this,'נסיכה אמיצה בממלכה')">👸 נסיכה</button>
-      <button class="chip" onclick="pickTheme(this,'דינוזאורים חמודים')">🦕 דינוזאור</button>
-      <button class="chip" onclick="pickTheme(this,'כלב חמוד בפארק')">🐶 כלבלב</button>
-      <button class="chip" onclick="pickTheme(this,'חד קרן קסום ביער')">🦄 חד קרן</button>
-    </div>
-    <input class="subject-input" type="text" id="subject" placeholder="או כתבו כל נושא אחר — רכבת קיטור, ילדה עם ארנב, דרקון ורוד..." maxlength="120"/>
+  <div class="creator-head">
+    <h2 class="creator-title">צרו ספר חדש</h2>
+    <p class="creator-sub">כל ספר ייחודי — איורים + סיפור בעברית יוצרים בזמן אמת</p>
   </div>
 
-  <div class="form-group">
-    <div class="form-label"><span class="form-label-num">2</span> סוג פעילות</div>
-    <div class="option-grid option-grid-3">
-      <button class="option-card active" data-act="coloring" onclick="selectOpt(this,'act')">
-        <span class="option-icon">🎨</span>
-        <div class="option-name">צביעה</div>
-        <div class="option-desc">קווים עבים לצביעה</div>
+  <!-- Step 1: Theme -->
+  <div class="fg">
+    <div class="step-label"><span class="step-num">1</span> בחרו עולם סיפורי</div>
+    <div class="themes-grid" id="themes-grid">
+
+      <button class="theme-card th-jungle" data-theme="jungle" onclick="pickTheme(this)">
+        <span class="tc-emoji">🌿</span>
+        <div class="tc-name">הרפתקה בג'ונגל</div>
+        <div class="tc-tag">חיות, גילויים ואמץ</div>
       </button>
-      <button class="option-card" data-act="dotted" onclick="selectOpt(this,'act')">
-        <span class="option-icon">🔢</span>
-        <div class="option-name">נקודות</div>
-        <div class="option-desc">חיבור נקודות ממוספרות</div>
+
+      <button class="theme-card th-space" data-theme="space" onclick="pickTheme(this)">
+        <span class="tc-emoji">🚀</span>
+        <div class="tc-name">מסע בחלל</div>
+        <div class="tc-tag">כוכבים, חלל ועולמות רחוקים</div>
       </button>
-      <button class="option-card" data-act="maze" onclick="selectOpt(this,'act')">
-        <span class="option-icon">🌀</span>
-        <div class="option-name">מבוך</div>
-        <div class="option-desc">מבוך כיפי לפתרון</div>
+
+      <button class="theme-card th-ocean" data-theme="ocean" onclick="pickTheme(this)">
+        <span class="tc-emoji">🌊</span>
+        <div class="tc-name">ממלכת הים</div>
+        <div class="tc-tag">בת ים, אלמוגים ואוצרות</div>
+      </button>
+
+      <button class="theme-card th-dragon" data-theme="dragon" onclick="pickTheme(this)">
+        <span class="tc-emoji">🐉</span>
+        <div class="tc-name">הדרקון הסודי</div>
+        <div class="tc-tag">דרקון שלבו זהב</div>
+      </button>
+
+      <button class="theme-card th-princess" data-theme="princess" onclick="pickTheme(this)">
+        <span class="tc-emoji">👸</span>
+        <div class="tc-name">הנסיכה האמיצה</div>
+        <div class="tc-tag">נסיכה שפותרת הכל בעצמה</div>
+      </button>
+
+      <button class="theme-card th-dinos" data-theme="dinos" onclick="pickTheme(this)">
+        <span class="tc-emoji">🦕</span>
+        <div class="tc-name">עולם הדינוזאורים</div>
+        <div class="tc-tag">חברות בין מינים שונים</div>
+      </button>
+
+      <button class="theme-card th-garden" data-theme="garden" onclick="pickTheme(this)">
+        <span class="tc-emoji">🌸</span>
+        <div class="tc-name">הגן הקסום</div>
+        <div class="tc-tag">פיות, פרחים וקסמי טבע</div>
+      </button>
+
+      <button class="theme-card th-pirates" data-theme="pirates" onclick="pickTheme(this)">
+        <span class="tc-emoji">🏴‍☠️</span>
+        <div class="tc-name">פיראטים טובים</div>
+        <div class="tc-tag">ספינה, מפה ואוצר</div>
+      </button>
+
+      <button class="theme-card th-heroes" data-theme="heroes" onclick="pickTheme(this)">
+        <span class="tc-emoji">🦸</span>
+        <div class="tc-name">גיבורי-על</div>
+        <div class="tc-tag">כוחות מיוחדים ועזרה לאחרים</div>
+      </button>
+
+      <button class="theme-card th-farm" data-theme="farm" onclick="pickTheme(this)">
+        <span class="tc-emoji">🐄</span>
+        <div class="tc-name">הפרחה הגדולה</div>
+        <div class="tc-tag">חיות, שדות ושיתוף פעולה</div>
+      </button>
+
+      <button class="theme-card th-custom active" data-theme="custom" onclick="pickTheme(this)">
+        <span class="tc-emoji">✏️</span>
+        <div class="tc-name">נושא חופשי</div>
+        <div class="tc-tag">כתבו כל רעיון שבראש</div>
+      </button>
+
+    </div>
+    <div class="custom-input-wrap show" id="custom-wrap">
+      <input class="custom-input" type="text" id="custom-subject" placeholder="תארו את הסיפור שאתם רוצים — גיבור, עולם, נושא..." maxlength="200"/>
+    </div>
+  </div>
+
+  <!-- Step 2: Activity -->
+  <div class="fg">
+    <div class="step-label"><span class="step-num">2</span> סוג פעילות</div>
+    <div class="opt-grid og3">
+      <button class="opt-card active" data-act="coloring" onclick="pickOpt(this,'act')">
+        <span class="oc-icon">🎨</span><div class="oc-name">צביעה</div><div class="oc-desc">קווים עבים לצביעה</div>
+      </button>
+      <button class="opt-card" data-act="dotted" onclick="pickOpt(this,'act')">
+        <span class="oc-icon">🔢</span><div class="oc-name">נקודות</div><div class="oc-desc">חיבור נקודות ממוספרות</div>
+      </button>
+      <button class="opt-card" data-act="maze" onclick="pickOpt(this,'act')">
+        <span class="oc-icon">🌀</span><div class="oc-name">מבוך</div><div class="oc-desc">מבוך כיפי לפתרון</div>
       </button>
     </div>
   </div>
 
-  <div class="form-group">
-    <div class="form-label"><span class="form-label-num">3</span> גיל הילד/ה</div>
-    <div class="option-grid option-grid-2">
-      <button class="option-card" data-age="young" onclick="selectOpt(this,'age')">
-        <span class="option-icon">🐣</span>
-        <div class="option-name">קטנטנים</div>
-        <div class="option-desc">2–4 · פשוט מאוד</div>
+  <!-- Step 3: Age -->
+  <div class="fg">
+    <div class="step-label"><span class="step-num">3</span> גיל הילד/ה</div>
+    <div class="opt-grid og3b">
+      <button class="opt-card" data-age="young" onclick="pickOpt(this,'age')">
+        <span class="oc-icon">🐣</span><div class="oc-name">קטנטנים</div><div class="oc-desc">2–4 · פשוט מאוד</div>
       </button>
-      <button class="option-card active" data-age="mid" onclick="selectOpt(this,'age')">
-        <span class="option-icon">🌟</span>
-        <div class="option-name">ילדים</div>
-        <div class="option-desc">5–7 · עלילה ורגש</div>
+      <button class="opt-card active" data-age="mid" onclick="pickOpt(this,'age')">
+        <span class="oc-icon">🌟</span><div class="oc-name">ילדים</div><div class="oc-desc">5–7 · עלילה ורגש</div>
       </button>
-      <button class="option-card" data-age="older" onclick="selectOpt(this,'age')">
-        <span class="option-icon">🏆</span>
-        <div class="option-name">גדולים</div>
-        <div class="option-desc">8+ · מורכב ומאתגר</div>
+      <button class="opt-card" data-age="older" onclick="pickOpt(this,'age')">
+        <span class="oc-icon">🏆</span><div class="oc-name">גדולים</div><div class="oc-desc">8+ · מורכב ומעמיק</div>
       </button>
     </div>
   </div>
 
-  <div class="form-group">
-    <div class="form-label"><span class="form-label-num">4</span> כמה עמודים?</div>
+  <!-- Step 4: Count -->
+  <div class="fg">
+    <div class="step-label"><span class="step-num">4</span> כמה עמודים?</div>
     <div class="count-row">
       <button class="count-btn active" onclick="setCount(1,this)">1 עמוד</button>
       <button class="count-btn" onclick="setCount(2,this)">2 עמודים</button>
@@ -470,85 +363,92 @@
 
   <div class="divider"></div>
 
-  <button class="btn-generate" id="gen-btn" onclick="generate()">
-    <span style="font-size:1.4rem">✨</span>
+  <button class="btn-gen" id="gen-btn" onclick="generate()">
+    <span style="font-size:1.3rem">✨</span>
     <span id="gen-text">צרו ספר</span>
   </button>
 
-  <div class="loading-section" id="loading">
-    <div class="loading-crayon">🖍️</div>
-    <div class="loading-title" id="loading-title">יוצר איורים מדהימים...</div>
-    <div class="loading-sub">זה לוקח כ-20–40 שניות — כדאי לחכות!</div>
-    <div class="loading-steps">
-      <span class="loading-step active" id="step-images">🎨 יוצר איורים</span>
-      <span class="loading-step" id="step-story">📖 כותב סיפור</span>
-      <span class="loading-step" id="step-done">✅ מוכן!</span>
+  <!-- Loading -->
+  <div class="loading" id="loading">
+    <div class="l-crayon">🖍️</div>
+    <div class="l-title">יוצר את הספר שלכם...</div>
+    <div class="l-sub">זה לוקח כ-20–40 שניות — שווה לחכות!</div>
+    <div class="l-steps">
+      <span class="l-step active" id="ls-images">🎨 יוצר איורים</span>
+      <span class="l-step" id="ls-story">📖 כותב סיפור</span>
+      <span class="l-step" id="ls-done">✅ מוכן!</span>
     </div>
-    <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+    <div class="prog-track"><div class="prog-bar" id="prog-bar"></div></div>
   </div>
 
-  <div class="results-section" id="results">
+  <!-- Results -->
+  <div class="results" id="results">
     <div class="book-banner">
-      <div class="book-banner-left">
-        <div class="book-banner-title" id="book-title-display">הספר שלכם מוכן!</div>
-        <div class="book-banner-sub" id="book-banner-sub"></div>
-        <div class="story-status-badge story-loading-badge" id="story-status">⏳ כותב סיפור...</div>
+      <div class="bb-left">
+        <div class="bb-title" id="bb-title">הספר שלכם מוכן!</div>
+        <div class="bb-sub" id="bb-sub"></div>
+        <div class="story-badge sb-loading" id="story-badge">⏳ כותב סיפור...</div>
       </div>
-      <div class="book-banner-actions">
-        <button class="btn-book btn-book-primary" onclick="openBook()">📖 קרא כספר</button>
-        <button class="btn-book btn-book-secondary" id="pdf-btn" onclick="downloadPdf()">📄 הורד PDF</button>
+      <div class="bb-actions">
+        <button class="btn-bb bb-primary" onclick="openBook()">📖 קרא כספר</button>
+        <button class="btn-bb bb-secondary" id="pdf-btn" onclick="downloadPdf()">📄 הורד PDF</button>
       </div>
     </div>
 
-    <div class="pages-header">
-      <div class="pages-header-title" id="pages-label">העמודים</div>
+    <div class="pg-header">
+      <div class="pg-title" id="pg-title">העמודים</div>
       <button class="btn-regen" onclick="generate()">↺ צור שוב</button>
     </div>
     <div class="pages-grid" id="pages-grid"></div>
 
     <div class="print-tip">
       <span style="flex-shrink:0">🖨️</span>
-      <div class="print-tip-text"><b>לתוצאה הכי טובה:</b> הדפיסו על A4 רגיל — שחור-לבן מספיק! הגדירו "התאם לדף" בהגדרות המדפסת.</div>
+      <div class="pt-text"><b>לתוצאה הכי טובה:</b> הדפיסו על A4 — שחור-לבן מספיק! בחרו "התאם לדף" בהגדרות המדפסת.</div>
     </div>
   </div>
 </section>
 
 <!-- Book Viewer -->
-<div class="book-overlay" id="book-overlay" onclick="onOverlayClick(event)">
+<div class="book-overlay" id="book-overlay" onclick="overlayClick(event)">
   <div class="book-modal">
-    <div class="book-topbar">
-      <div class="book-modal-title" id="book-modal-title">הספר שלכם</div>
-      <button class="book-close-btn" onclick="closeBook()">✕</button>
+    <div class="bm-topbar">
+      <div class="bm-title" id="bm-title">הספר שלכם</div>
+      <button class="bm-close" onclick="closeBook()">✕</button>
     </div>
-    <div class="book-page-wrapper">
-      <img class="book-page-img" id="book-img" src="" alt=""/>
-      <div class="book-page-story">
-        <div class="book-page-text" id="book-text"></div>
-        <div class="book-page-moral" id="book-moral"></div>
+    <div class="book-page">
+      <img class="bp-img" id="bp-img" src="" alt=""/>
+      <div class="bp-story">
+        <div class="bp-text" id="bp-text"></div>
+        <div class="bp-moral" id="bp-moral"></div>
       </div>
     </div>
-    <div class="book-nav-bar">
-      <button class="book-nav-btn" id="book-prev" onclick="bookNav(1)">→</button>
-      <div class="book-dots" id="book-dots"></div>
-      <button class="book-nav-btn" id="book-next" onclick="bookNav(-1)">←</button>
+    <div class="bm-nav">
+      <button class="bm-btn" id="bm-prev" onclick="bookNav(1)">→</button>
+      <div class="bm-dots" id="bm-dots"></div>
+      <button class="bm-btn" id="bm-next" onclick="bookNav(-1)">←</button>
     </div>
   </div>
 </div>
 
-<footer>
-  🖍️ ציורי — ספרי פעילות חינמיים לילדים &nbsp;·&nbsp; נוצר עם ❤️ ובינה מלאכותית
-</footer>
+<footer>🖍️ ציורי — ספרי פעילות חינמיים לילדים &nbsp;·&nbsp; נוצר עם ❤️ ובינה מלאכותית</footer>
 
 <script>
-const state = { act: 'coloring', age: 'mid', count: 1 };
-let generatedUrls = [];
-let storyData = null;
-let storyLoading = false;
-let bookPage = 0;
+// ── STATE ──
+const state = { theme: 'custom', act: 'coloring', age: 'mid', count: 1 };
+let urls = [], story = null, storyLoading = false, bookPage = 0;
 
-function selectOpt(btn, group) {
-  const attr = group === 'act' ? '[data-act]' : '[data-age]';
-  btn.closest('.option-grid').querySelectorAll('.option-card').forEach(b => b.classList.remove('active'));
+// ── THEME SELECTION ──
+function pickTheme(btn) {
+  document.querySelectorAll('.theme-card').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state.theme = btn.dataset.theme;
+  const wrap = document.getElementById('custom-wrap');
+  wrap.classList.toggle('show', state.theme === 'custom');
+}
+
+// ── OPTION SELECTION ──
+function pickOpt(btn, group) {
+  btn.closest('.opt-grid').querySelectorAll('.opt-card').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   if (group === 'act') state.act = btn.dataset.act;
   else state.age = btn.dataset.age;
@@ -560,162 +460,131 @@ function setCount(n, btn) {
   btn.classList.add('active');
 }
 
-function pickTheme(btn, val) {
-  document.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('subject').value = val;
-}
-
+// ── GENERATE ──
 async function generate() {
-  const subject = document.getElementById('subject').value.trim();
-  if (!subject) {
-    const inp = document.getElementById('subject');
+  const customSubject = document.getElementById('custom-subject').value.trim();
+  if (state.theme === 'custom' && !customSubject) {
+    const inp = document.getElementById('custom-subject');
     inp.focus(); inp.style.borderColor = '#EF4444';
     setTimeout(() => inp.style.borderColor = '', 1500);
     return;
   }
 
-  generatedUrls = []; storyData = null; storyLoading = false;
-  const genBtn = document.getElementById('gen-btn');
-  genBtn.disabled = true;
+  urls = []; story = null; storyLoading = false;
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true;
   document.getElementById('gen-text').textContent = 'יוצר...';
   document.getElementById('results').classList.remove('show');
   document.getElementById('loading').classList.add('show');
-  setStep('images'); setProgress(5);
+  setStep('images'); setProg(5);
 
   try {
     const resp = await fetch('/api/generate', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ subject, style: state.act, age: state.age, count: state.count })
+      body: JSON.stringify({ theme: state.theme, customSubject, style: state.act, age: state.age, count: state.count })
     });
-    setProgress(75);
+    setProg(75);
     const data = await resp.json();
     if (!resp.ok || !data.urls) throw new Error(data.error || 'שגיאה');
+    urls = data.urls;
+    setStep('story'); setProg(85);
 
-    generatedUrls = data.urls;
-    setStep('story'); setProgress(85);
+    genStory(customSubject); // background
 
-    // Generate story in background (don't block showing results)
-    generateStory(subject);
-
-    setProgress(100);
+    setProg(100);
     await sleep(300);
-    renderResults(data.urls, subject);
+    showResults();
   } catch (e) {
     alert('שגיאה: ' + e.message);
     document.getElementById('loading').classList.remove('show');
   } finally {
-    genBtn.disabled = false;
+    btn.disabled = false;
     document.getElementById('gen-text').textContent = 'צרו ספר';
   }
 }
 
-async function generateStory(subject) {
-  storyLoading = true;
-  setStoryStatus('loading');
+async function genStory(customSubject) {
+  storyLoading = true; setStoryBadge('loading');
   try {
     const resp = await fetch('/api/generate-story', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ subject, style: state.act, age: state.age, count: generatedUrls.length })
+      body: JSON.stringify({ theme: state.theme, customSubject, style: state.act, age: state.age, count: urls.length })
     });
-    if (!resp.ok) throw new Error('Story API error');
     const data = await resp.json();
-    if (data.title && data.pages) {
-      storyData = data;
-      document.getElementById('book-title-display').textContent = '📚 ' + data.title;
-      document.getElementById('book-modal-title').textContent = data.title;
-      setStoryStatus('ready');
+    if (resp.ok && data.title) {
+      story = data;
+      document.getElementById('bb-title').textContent = '📚 ' + data.title;
+      document.getElementById('bm-title').textContent = data.title;
+      setStoryBadge('ready');
     }
-  } catch (e) {
-    console.warn('Story failed:', e.message);
-    setStoryStatus('error');
-  } finally {
-    storyLoading = false;
-  }
+  } catch { setStoryBadge('error'); }
+  finally { storyLoading = false; }
 }
 
-function setStoryStatus(status) {
-  const el = document.getElementById('story-status');
-  el.className = 'story-status-badge';
-  if (status === 'loading') { el.classList.add('story-loading-badge'); el.textContent = '⏳ כותב סיפור...'; }
-  else if (status === 'ready') { el.classList.add('story-ready-badge'); el.textContent = '✅ הסיפור מוכן!'; }
-  else { el.classList.add('story-loading-badge'); el.textContent = '📖 ללא סיפור'; }
+function setStoryBadge(s) {
+  const el = document.getElementById('story-badge');
+  el.className = 'story-badge';
+  if (s === 'loading') { el.classList.add('sb-loading'); el.textContent = '⏳ כותב סיפור...'; }
+  else if (s === 'ready') { el.classList.add('sb-ready'); el.textContent = '✅ הסיפור מוכן!'; }
+  else { el.classList.add('sb-loading'); el.textContent = '📖 ללא סיפור'; }
 }
 
-function renderResults(urls, subject) {
+function showResults() {
   document.getElementById('loading').classList.remove('show');
-  const actLabel = { coloring: 'דפי צביעה', dotted: 'חיבור נקודות', maze: 'מבוכים' }[state.act] || 'עמודים';
-  const ageLabel = { young: 'גיל 2-4', mid: 'גיל 5-7', older: 'גיל 8+' }[state.age];
-  document.getElementById('book-banner-sub').textContent = `${urls.length} ${actLabel} · ${ageLabel}`;
-  document.getElementById('pages-label').textContent = `${urls.length} ${actLabel}`;
-
-  document.getElementById('pages-grid').innerHTML = urls.map((url, i) => `
+  const acts = { coloring: 'דפי צביעה', dotted: 'חיבור נקודות', maze: 'מבוכים' };
+  const ages = { young: 'גיל 2–4', mid: 'גיל 5–7', older: 'גיל 8+' };
+  document.getElementById('bb-sub').textContent = `${urls.length} ${acts[state.act]} · ${ages[state.age]}`;
+  document.getElementById('pg-title').textContent = `${urls.length} ${acts[state.act]}`;
+  document.getElementById('pages-grid').innerHTML = urls.map((u, i) => `
     <div class="page-card" onclick="openBookAt(${i})">
-      <img src="${url}" alt="עמוד ${i+1}" loading="lazy"/>
-      <div class="page-card-footer">
-        <span class="page-card-num">עמוד ${i+1}</span>
-        <a href="${url}" download="tziyuri-${i+1}.png" class="page-card-dl" onclick="event.stopPropagation()">⬇️</a>
+      <img src="${u}" alt="עמוד ${i+1}" loading="lazy"/>
+      <div class="page-card-foot">
+        <span class="pc-num">עמוד ${i+1}</span>
+        <a href="${u}" download="tziyuri-${i+1}.png" class="pc-dl" onclick="event.stopPropagation()">⬇️</a>
       </div>
     </div>`).join('');
-
   document.getElementById('results').classList.add('show');
   document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // ── BOOK VIEWER ──
 function openBook() { openBookAt(0); }
-function openBookAt(page) {
-  if (!generatedUrls.length) return;
-  bookPage = page;
-  buildDots();
-  showBookPage();
+function openBookAt(p) {
+  if (!urls.length) return;
+  bookPage = p; buildDots(); renderPage();
   document.getElementById('book-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-function closeBook() {
-  document.getElementById('book-overlay').classList.remove('open');
-  document.body.style.overflow = '';
-}
-function onOverlayClick(e) { if (e.target === e.currentTarget) closeBook(); }
+function closeBook() { document.getElementById('book-overlay').classList.remove('open'); document.body.style.overflow = ''; }
+function overlayClick(e) { if (e.target === e.currentTarget) closeBook(); }
 
 function buildDots() {
-  document.getElementById('book-dots').innerHTML = generatedUrls.map((_,i) =>
-    `<div class="book-dot${i===bookPage?' active':''}" onclick="goToPage(${i})"></div>`).join('');
+  document.getElementById('bm-dots').innerHTML = urls.map((_,i) =>
+    `<div class="bm-dot${i===bookPage?' active':''}" onclick="jumpTo(${i})"></div>`).join('');
 }
-function goToPage(n) { bookPage=n; buildDots(); showBookPage(); }
+function jumpTo(n) { bookPage = n; buildDots(); renderPage(); }
 
-function showBookPage() {
-  const total = generatedUrls.length;
-  document.getElementById('book-img').src = generatedUrls[bookPage];
-  document.getElementById('book-prev').disabled = bookPage >= total - 1;
-  document.getElementById('book-next').disabled = bookPage <= 0;
+function renderPage() {
+  const total = urls.length;
+  document.getElementById('bp-img').src = urls[bookPage];
+  document.getElementById('bm-prev').disabled = bookPage >= total - 1;
+  document.getElementById('bm-next').disabled = bookPage <= 0;
+  document.getElementById('bm-title').textContent = story?.title || '';
 
-  const textEl = document.getElementById('book-text');
-  if (storyData?.pages?.[bookPage]?.text) {
-    textEl.textContent = storyData.pages[bookPage].text;
-  } else if (storyLoading) {
-    textEl.innerHTML = '<span style="color:#9CA3AF;font-style:italic">✍️ כותב סיפור...</span>';
-  } else {
-    textEl.textContent = '';
-  }
+  const textEl = document.getElementById('bp-text');
+  if (story?.pages?.[bookPage]?.text) textEl.textContent = story.pages[bookPage].text;
+  else if (storyLoading) textEl.innerHTML = '<span style="color:#9CA3AF;font-style:italic">✍️ כותב סיפור...</span>';
+  else textEl.textContent = '';
 
-  const moralEl = document.getElementById('book-moral');
-  if (bookPage === total - 1 && storyData?.moral) {
-    moralEl.textContent = '⭐ ' + storyData.moral;
-    moralEl.classList.add('show');
-  } else {
-    moralEl.classList.remove('show');
-  }
-
-  document.getElementById('book-modal-title').textContent = storyData?.title || document.getElementById('subject').value;
+  const moralEl = document.getElementById('bp-moral');
+  if (bookPage === total - 1 && story?.moral) { moralEl.textContent = '⭐ ' + story.moral; moralEl.classList.add('show'); }
+  else moralEl.classList.remove('show');
 }
 
-function bookNav(dir) {
-  const next = bookPage + dir;
-  if (next < 0 || next >= generatedUrls.length) return;
-  bookPage = next;
-  buildDots();
-  showBookPage();
+function bookNav(d) {
+  const n = bookPage + d;
+  if (n < 0 || n >= urls.length) return;
+  bookPage = n; buildDots(); renderPage();
 }
 
 document.addEventListener('keydown', e => {
@@ -727,58 +596,56 @@ document.addEventListener('keydown', e => {
 
 // ── PDF ──
 async function downloadPdf() {
-  if (!generatedUrls.length) return;
+  if (!urls.length) return;
   const btn = document.getElementById('pdf-btn');
-  btn.disabled = true;
-  btn.textContent = '⏳ מכין...';
+  btn.disabled = true; btn.textContent = '⏳ מכין...';
 
   if (storyLoading) {
     btn.textContent = '⏳ ממתין לסיפור...';
-    let waited = 0;
-    while (storyLoading && waited < 15000) { await sleep(500); waited += 500; }
+    let w = 0;
+    while (storyLoading && w < 15000) { await sleep(500); w += 500; }
   }
 
   try {
     const { jsPDF } = window.jspdf;
     const W = 794, H = 1123;
     const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
-    const subject = document.getElementById('subject').value.trim();
-    const story = storyData;
-    const total = generatedUrls.length;
-    const emoji = getEmoji(subject);
+    const s = story;
+    const total = urls.length;
+    const themeEmoji = document.querySelector('.theme-card.active .tc-emoji')?.textContent || '📚';
 
     const frame = document.createElement('div');
-    frame.style.cssText = `position:fixed;left:-9999px;top:0;width:${W}px;overflow:hidden;background:white;font-family:Heebo,sans-serif;`;
+    frame.style.cssText = `position:fixed;left:-9999px;top:0;width:${W}px;overflow:hidden;background:white;font-family:Heebo,Arial,sans-serif;`;
     document.body.appendChild(frame);
 
     // Cover
     frame.innerHTML = `<div style="width:${W}px;height:${H}px;background:linear-gradient(160deg,#FF6B35,#c44a1f);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 80px;">
-      <div style="font-size:100px;margin-bottom:24px;">${emoji}</div>
-      <div style="font-size:58px;font-weight:900;color:white;text-align:center;direction:rtl;line-height:1.15;margin-bottom:16px;">${story?.title || subject}</div>
-      ${story?.subtitle ? `<div style="font-size:26px;color:rgba(255,255,255,0.8);text-align:center;direction:rtl;margin-bottom:24px;">${story.subtitle}</div>` : ''}
-      <div style="margin-top:40px;font-size:18px;color:rgba(255,255,255,0.65);direction:rtl;">ספר פעילות · ${total} עמודים</div>
+      <div style="font-size:110px;margin-bottom:20px;">${themeEmoji}</div>
+      <div style="font-size:54px;font-weight:900;color:white;text-align:center;direction:rtl;line-height:1.15;margin-bottom:12px;">${s?.title || ''}</div>
+      ${s?.subtitle ? `<div style="font-size:24px;color:rgba(255,255,255,.78);text-align:center;direction:rtl;margin-bottom:20px;">${s.subtitle}</div>` : ''}
+      <div style="margin-top:36px;font-size:17px;color:rgba(255,255,255,.6);direction:rtl;">ספר פעילות · ${total} עמודים</div>
     </div>`;
     const c0 = await html2canvas(frame.firstElementChild, { scale: 1, backgroundColor: '#FF6B35', width: W, height: H });
-    doc.addImage(c0.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, 595, 842);
+    doc.addImage(c0.toDataURL('image/jpeg', .92), 'JPEG', 0, 0, 595, 842);
 
     for (let i = 0; i < total; i++) {
       btn.textContent = `⏳ עמוד ${i+1}/${total}...`;
-      const text = story?.pages?.[i]?.text || '';
+      const text = s?.pages?.[i]?.text || '';
       const isLast = i === total - 1;
-      const src = `/api/proxy-image?url=${encodeURIComponent(generatedUrls[i])}`;
+      const src = `/api/proxy-image?url=${encodeURIComponent(urls[i])}`;
 
-      frame.innerHTML = `<div style="width:${W}px;height:${H}px;background:white;padding:40px 52px;box-sizing:border-box;direction:rtl;position:relative;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div style="width:7px;height:48px;background:#FF6B35;border-radius:4px;"></div>
-            <div style="font-size:30px;font-weight:900;color:#111827;">${story?.title || subject}</div>
+      frame.innerHTML = `<div style="width:${W}px;height:${H}px;background:white;padding:38px 50px;box-sizing:border-box;direction:rtl;position:relative;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:6px;height:44px;background:#FF6B35;border-radius:3px;flex-shrink:0;"></div>
+            <div style="font-size:28px;font-weight:900;color:#111827;">${s?.title || ''}</div>
           </div>
-          <div style="font-size:20px;font-weight:700;color:#9CA3AF;">${i+1} / ${total}</div>
+          <div style="font-size:18px;font-weight:700;color:#9CA3AF;">${i+1} / ${total}</div>
         </div>
-        <img src="${src}" style="width:100%;height:560px;object-fit:contain;display:block;border-radius:16px;background:#FAFAFA;"/>
-        ${text ? `<p style="font-size:24px;line-height:1.9;color:#111827;margin-top:24px;text-align:right;font-weight:500;">${text}</p>` : ''}
-        ${isLast && story?.moral ? `<div style="background:#FFFBEB;border:2px solid #FDE68A;border-radius:14px;padding:18px 24px;margin-top:18px;font-size:21px;font-weight:800;color:#92400E;direction:rtl;">⭐ ${story.moral}</div>` : ''}
-        <div style="position:absolute;bottom:24px;left:0;right:0;text-align:center;font-size:14px;color:#D1D5DB;direction:ltr;">ציורי · tziyuri.app</div>
+        <img src="${src}" style="width:100%;height:560px;object-fit:contain;display:block;border-radius:14px;background:#FAFAFA;"/>
+        ${text ? `<p style="font-size:22px;line-height:1.9;color:#111827;margin-top:22px;text-align:right;font-weight:500;">${text}</p>` : ''}
+        ${isLast && s?.moral ? `<div style="background:#FFFBEB;border:2px solid #FDE68A;border-radius:12px;padding:16px 20px;margin-top:16px;font-size:20px;font-weight:800;color:#92400E;direction:rtl;">⭐ ${s.moral}</div>` : ''}
+        <div style="position:absolute;bottom:22px;left:0;right:0;text-align:center;font-size:13px;color:#D1D5DB;direction:ltr;">ציורי · tziyuri.app</div>
       </div>`;
 
       await new Promise(res => {
@@ -787,42 +654,31 @@ async function downloadPdf() {
         else { img.onload = res; img.onerror = res; setTimeout(res, 10000); }
       });
 
-      const canvas = await html2canvas(frame.firstElementChild, {
-        scale: 1, useCORS: true, allowTaint: false, backgroundColor: '#ffffff', width: W, height: H
-      });
+      const canvas = await html2canvas(frame.firstElementChild, { scale: 1, useCORS: true, allowTaint: false, backgroundColor: '#ffffff', width: W, height: H });
       doc.addPage();
-      doc.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, 595, 842);
+      doc.addImage(canvas.toDataURL('image/jpeg', .92), 'JPEG', 0, 0, 595, 842);
     }
 
     document.body.removeChild(frame);
-    const name = (story?.title || subject || 'tziyuri').replace(/[^\u05D0-\u05EAa-zA-Z0-9 ]/g,'').trim().replace(/ +/g,'-');
-    doc.save(name + '.pdf');
+    const fname = (s?.title || 'tziyuri').replace(/[^\u05D0-\u05EAa-zA-Z0-9 ]/g,'').trim().replace(/ +/g,'-');
+    doc.save(fname + '.pdf');
   } catch (e) {
-    console.error(e);
-    alert('שגיאה ביצירת PDF: ' + e.message);
+    console.error(e); alert('שגיאה ביצירת PDF: ' + e.message);
   } finally {
-    btn.disabled = false;
-    btn.textContent = '📄 הורד PDF';
+    btn.disabled = false; btn.textContent = '📄 הורד PDF';
   }
 }
 
-function getEmoji(subject) {
-  const map = [['אריה','🦁'],['פיל','🐘'],['פרפר','🦋'],['בת ים','🧜'],['חלל','🚀'],['דרקון','🐉'],['נסיכה','👸'],['דינוזאור','🦕'],['כלב','🐶'],['חד קרן','🦄'],['רכבת','🚂'],['דג','🐟'],['ג\'ירפה','🦒'],['פרה','🐄'],['חתול','🐱'],['ארנב','🐰']];
-  for (const [k,v] of map) if (subject.includes(k)) return v;
-  return '📚';
-}
-
-function setStep(step) {
-  const steps = ['images','story','done'];
-  const idx = steps.indexOf(step);
-  steps.forEach((s,i) => {
-    const el = document.getElementById('step-' + s);
+function setStep(s) {
+  ['images','story','done'].forEach((n,i) => {
+    const el = document.getElementById('ls-'+n);
     el.classList.remove('active','done');
+    const idx = ['images','story','done'].indexOf(s);
     if (i < idx) el.classList.add('done');
     else if (i === idx) el.classList.add('active');
   });
 }
-function setProgress(pct) { document.getElementById('progress-bar').style.width = pct + '%'; }
+function setProg(p) { document.getElementById('prog-bar').style.width = p + '%'; }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 </script>
 </body>
