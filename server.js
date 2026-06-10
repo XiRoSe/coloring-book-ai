@@ -133,8 +133,8 @@ Return ONLY valid JSON, no markdown, no extra text:
     const jsonStr = raw.startsWith('{') ? raw : raw.slice(raw.indexOf('{'), raw.lastIndexOf('}') + 1);
     plan = JSON.parse(jsonStr);
   } catch (err) {
-    console.error('Plan error:', err.message);
-    return res.status(500).json({ error: 'שגיאה ביצירת תכנית הספר' });
+    console.error('Plan error:', err.status, err.message, err.error);
+    return res.status(500).json({ error: 'שגיאה ביצירת תכנית הספר', detail: err.message });
   }
 
   // Step 2: Generate images in parallel — each gets characters + unique scene prompt
