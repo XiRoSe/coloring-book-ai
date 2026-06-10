@@ -50,6 +50,10 @@ const STYLE_SUFFIX = {
     const c = age === 'young' ? 'very simple large shapes, minimal detail, very thick lines' : age === 'mid' ? 'medium detail, clear bold outlines' : 'detailed, intricate patterns';
     return `children's coloring book page, thick bold black outlines, pure white background, NO color NO shading NO gray, clean line art only, ${c}. Black lines on white only, printable style`;
   },
+  colored: (age) => {
+    const c = age === 'young' ? 'very simple shapes, bold friendly colors, minimal background' : age === 'mid' ? 'expressive, warm colors, storybook style' : 'richly detailed, vibrant colors, professional illustration';
+    return `children's picture book illustration, ${c}, watercolor and gouache style, soft warm lighting, no text, no letters`;
+  },
   dotted: (age) => {
     const d = age === 'young' ? '15 to 25 large numbered dots' : age === 'mid' ? '30 to 50 numbered dots' : '60 to 100 numbered dots';
     return `connect the dots activity worksheet, white background, ${d} forming the outline, clear black numbered circles, printable educational worksheet`;
@@ -72,77 +76,87 @@ function fetchBuffer(url) {
   });
 }
 
-app.post('/api/generate', async (req, res) => {
+// ── GENERATE FULL BOOK (story plan + consistent images) ──
+app.post('/api/generate-book', async (req, res) => {
   const { theme = 'custom', customSubject = '', style = 'coloring', age = 'mid', count = 1 } = req.body;
-  const themeData = THEMES[theme] || THEMES.custom;
-  const subject = themeData.imageBase || customSubject.trim();
-  if (!subject) return res.status(400).json({ error: 'Subject required' });
-  if (count > 6) return res.status(400).json({ error: 'Max 6 pages' });
-
-  try {
-    const styleSuffix = STYLE_SUFFIX[style]?.(age) || STYLE_SUFFIX.coloring(age);
-    const prompt = `${subject}, ${styleSuffix}`;
-
-    const outputs = await Promise.all(
-      Array.from({ length: Math.min(count, 6) }, () =>
-        replicate.run('black-forest-labs/flux-1.1-pro', {
-          input: { prompt, aspect_ratio: '3:4', output_format: 'png', safety_tolerance: 5 }
-        })
-      )
-    );
-    const urls = outputs.map(o => Array.isArray(o) ? o[0] : String(o));
-    res.json({ urls });
-  } catch (err) {
-    console.error('Generate error:', err.message);
-    res.status(500).json({ error: 'שגיאה ביצירת התמונה' });
-  }
-});
-
-app.post('/api/generate-story', async (req, res) => {
-  const { theme = 'custom', customSubject = '', age = 'mid', count = 1, style = 'coloring' } = req.body;
   const themeData = THEMES[theme] || THEMES.custom;
   const storyBase = themeData.storyBase || customSubject.trim();
   if (!storyBase) return res.status(400).json({ error: 'Subject required' });
+  if (count > 6) return res.status(400).json({ error: 'Max 6 pages' });
 
-  const ageDesc   = { young: 'גיל 2–4: משפטים קצרים מאוד, מילים פשוטות', mid: 'גיל 5–7: שפה נגישה וסיפורית', older: 'גיל 8–12: שפה עשירה, עלילה מורכבת' }[age] || 'גיל 5–7';
-  const perPage   = { young: '1–2 משפטים קצרים', mid: '2–3 משפטים', older: '3–4 משפטים' }[age];
   const pageCount = Math.min(count, 6);
-  const styleHeb  = { coloring: 'דפי צביעה', dotted: 'חיבור נקודות', maze: 'מבוכים' }[style] || 'דפים';
+  const ageDesc = { young: 'גיל 2–4: משפטים קצרים מאוד, מילים פשוטות', mid: 'גיל 5–7: שפה נגישה וסיפורית', older: 'גיל 8–12: שפה עשירה, עלילה מורכבת' }[age] || 'גיל 5–7';
+  const perPage = { young: '1–2 משפטים קצרים', mid: '2–3 משפטים', older: '3–4 משפטים' }[age];
+  const styleHeb = { coloring: 'דפי צביעה', colored: 'ספר איורים צבעוני', dotted: 'חיבור נקודות', maze: 'מבוכים' }[style] || 'דפים';
 
+  // Step 1: Claude generates full book plan — story + per-page image prompts
+  let plan;
   try {
-    const content = `אתה סופר ספרי ילדים מקצועי. צור סיפור קצר, מרתק ובעל ערך בעברית.
-
-עולם / נושא: ${storyBase}
-גיל: ${ageDesc}
-מספר עמודים: ${pageCount}
-סוג פעילות: ${styleHeb}
-
-כללים:
-- כל עמוד: ${perPage} שמלווים איור
-- עלילה ברורה: פתיחה ← אתגר ← פתרון ← סיום מרגש
-- שפה חמה, קצבית ומלאת דמיון
-- מוסר השכל פשוט, חיובי ואמיתי
-- החזר JSON בלבד, ללא markdown:
-{
-  "title": "כותרת הספר",
-  "subtitle": "תת-כותרת קצרה",
-  "pages": [{"page":1,"text":"..."}],
-  "moral": "מוסר השכל: ..."
-}`;
-
     const msg = await anthropic.messages.create({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1500,
-      messages: [{ role: 'user', content }]
+      max_tokens: 2500,
+      messages: [{
+        role: 'user',
+        content: `You are a professional children's book author and illustrator. Create a complete book plan.
+
+Theme: ${storyBase}
+Age: ${ageDesc}
+Pages: ${pageCount}
+Activity type: ${styleHeb}
+
+STORY RULES (write in Hebrew):
+- Each page: ${perPage} that accompany an illustration
+- Clear arc: opening → challenge → resolution → heartwarming ending
+- Warm, rhythmic, imaginative language
+- Simple, positive moral lesson
+
+IMAGE PROMPT RULES (write in English):
+- "characters" field: a concise visual description of the main character(s) — this will be prepended to every image prompt to ensure visual consistency. Be specific: age, hair, clothing, colors.
+- Each page "image_prompt": describe only the specific scene for that page (action, setting, mood). Do NOT repeat character descriptions here — they come from the "characters" field.
+- Prompts should be visual and concrete, suitable for an AI image generator.
+
+Return ONLY valid JSON, no markdown, no extra text:
+{
+  "title": "ספר כותרת",
+  "subtitle": "תת-כותרת",
+  "characters": "a 6-year-old girl with curly red hair, big brown eyes, wearing a teal dress",
+  "pages": [
+    {"page": 1, "text": "Hebrew story text...", "image_prompt": "standing at the edge of a magical forest, looking up at glowing trees with wonder"},
+    {"page": 2, "text": "Hebrew story text...", "image_prompt": "..."}
+  ],
+  "moral": "מוסר השכל: ..."
+}`
+      }]
     });
 
     const raw = msg.content[0].text.trim();
     const jsonStr = raw.startsWith('{') ? raw : raw.slice(raw.indexOf('{'), raw.lastIndexOf('}') + 1);
-    const story = JSON.parse(jsonStr);
-    res.json(story);
+    plan = JSON.parse(jsonStr);
   } catch (err) {
-    console.error('Story error:', err.message);
-    res.status(500).json({ error: 'שגיאה ביצירת הסיפור' });
+    console.error('Plan error:', err.message);
+    return res.status(500).json({ error: 'שגיאה ביצירת תכנית הספר' });
+  }
+
+  // Step 2: Generate images in parallel — each gets characters + unique scene prompt
+  // Same seed across all pages → consistent character style
+  const styleSuffix = STYLE_SUFFIX[style]?.(age) || STYLE_SUFFIX.coloring(age);
+  const seed = Math.floor(Math.random() * 999999) + 1;
+
+  try {
+    const imageUrls = await Promise.all(
+      plan.pages.map(p => {
+        const prompt = `${plan.characters}, ${p.image_prompt}, ${styleSuffix}`;
+        return replicate.run('black-forest-labs/flux-1.1-pro', {
+          input: { prompt, aspect_ratio: '3:4', output_format: 'png', safety_tolerance: 5, seed }
+        }).then(o => Array.isArray(o) ? o[0] : String(o));
+      })
+    );
+
+    plan.pages = plan.pages.map((p, i) => ({ ...p, image_url: imageUrls[i] }));
+    res.json(plan);
+  } catch (err) {
+    console.error('Images error:', err.message);
+    res.status(500).json({ error: 'שגיאה ביצירת התמונות' });
   }
 });
 

@@ -94,6 +94,7 @@
     /* ── OPTION GRID (activity / age) ── */
     .opt-grid{display:grid;gap:9px}
     .og3{grid-template-columns:repeat(3,1fr)}
+    .og4{grid-template-columns:repeat(4,1fr)}
     .og3b{grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
     .opt-card{padding:14px 10px;border-radius:14px;border:2px solid var(--border);background:white;cursor:pointer;text-align:center;transition:all .14s;font-family:'Heebo',sans-serif}
     .opt-card:hover{border-color:#d1d5db;transform:translateY(-1px)}
@@ -324,9 +325,12 @@
   <!-- Step 2: Activity -->
   <div class="fg">
     <div class="step-label"><span class="step-num">2</span> סוג פעילות</div>
-    <div class="opt-grid og3">
+    <div class="opt-grid og3b">
       <button class="opt-card active" data-act="coloring" onclick="pickOpt(this,'act')">
         <span class="oc-icon">🎨</span><div class="oc-name">צביעה</div><div class="oc-desc">קווים עבים לצביעה</div>
+      </button>
+      <button class="opt-card" data-act="colored" onclick="pickOpt(this,'act')">
+        <span class="oc-icon">🌈</span><div class="oc-name">צבעוני</div><div class="oc-desc">איור מלא כמו ספר ילדים</div>
       </button>
       <button class="opt-card" data-act="dotted" onclick="pickOpt(this,'act')">
         <span class="oc-icon">🔢</span><div class="oc-name">נקודות</div><div class="oc-desc">חיבור נקודות ממוספרות</div>
@@ -377,8 +381,8 @@
     <div class="l-title">יוצר את הספר שלכם...</div>
     <div class="l-sub">זה לוקח כ-20–40 שניות — שווה לחכות!</div>
     <div class="l-steps">
-      <span class="l-step active" id="ls-images">🎨 יוצר איורים</span>
-      <span class="l-step" id="ls-story">📖 כותב סיפור</span>
+      <span class="l-step active" id="ls-plan">✍️ מתכנן סיפור</span>
+      <span class="l-step" id="ls-images">🎨 יוצר איורים</span>
       <span class="l-step" id="ls-done">✅ מוכן!</span>
     </div>
     <div class="prog-track"><div class="prog-bar" id="prog-bar"></div></div>
@@ -440,6 +444,19 @@
 const state = { theme: 'custom', act: 'coloring', age: 'mid', count: 1 };
 let urls = [], story = null, storyLoading = false, bookPage = 0;
 
+// ── LOADING STEPS ──
+function setStep(s) {
+  ['plan','images','done'].forEach((n,i) => {
+    const el = document.getElementById('ls-'+n);
+    if (!el) return;
+    el.classList.remove('active','done');
+    const idx = ['plan','images','done'].indexOf(s);
+    if (i < idx) el.classList.add('done');
+    else if (i === idx) el.classList.add('active');
+  });
+}
+function setProg(p) { document.getElementById('prog-bar').style.width = p + '%'; }
+
 // ── THEME SELECTION ──
 function pickTheme(btn) {
   document.querySelectorAll('.theme-card').forEach(b => b.classList.remove('active'));
@@ -479,22 +496,26 @@ async function generate() {
   document.getElementById('gen-text').textContent = 'יוצר...';
   document.getElementById('results').classList.remove('show');
   document.getElementById('loading').classList.add('show');
-  setStep('images'); setProg(5);
+  setStep('plan'); setProg(8);
 
   try {
-    const resp = await fetch('/api/generate', {
+    // Single call: Claude plans + images generated with consistent character seed
+    const resp = await fetch('/api/generate-book', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ theme: state.theme, customSubject, style: state.act, age: state.age, count: state.count })
     });
-    setProg(75);
+    setProg(50);
+    setStep('images');
     const data = await resp.json();
-    if (!resp.ok || !data.urls) throw new Error(data.error || 'שגיאה');
-    urls = data.urls;
-    setStep('story'); setProg(85);
+    if (!resp.ok || !data.pages) throw new Error(data.error || 'שגיאה');
 
-    genStory(customSubject); // background
+    // Extract urls and build story object from unified response
+    urls  = data.pages.map(p => p.image_url);
+    story = { title: data.title, subtitle: data.subtitle, moral: data.moral,
+              pages: data.pages.map(p => ({ page: p.page, text: p.text })) };
+    storyLoading = false;
 
-    setProg(100);
+    setStep('done'); setProg(100);
     await sleep(300);
     showResults();
   } catch (e) {
@@ -504,24 +525,6 @@ async function generate() {
     btn.disabled = false;
     document.getElementById('gen-text').textContent = 'צרו ספר';
   }
-}
-
-async function genStory(customSubject) {
-  storyLoading = true; setStoryBadge('loading');
-  try {
-    const resp = await fetch('/api/generate-story', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ theme: state.theme, customSubject, style: state.act, age: state.age, count: urls.length })
-    });
-    const data = await resp.json();
-    if (resp.ok && data.title) {
-      story = data;
-      document.getElementById('bb-title').textContent = '📚 ' + data.title;
-      document.getElementById('bm-title').textContent = data.title;
-      setStoryBadge('ready');
-    }
-  } catch { setStoryBadge('error'); }
-  finally { storyLoading = false; }
 }
 
 function setStoryBadge(s) {
@@ -534,10 +537,16 @@ function setStoryBadge(s) {
 
 function showResults() {
   document.getElementById('loading').classList.remove('show');
-  const acts = { coloring: 'דפי צביעה', dotted: 'חיבור נקודות', maze: 'מבוכים' };
+  const acts = { coloring: 'דפי צביעה', colored: 'איורים צבעוניים', dotted: 'חיבור נקודות', maze: 'מבוכים' };
   const ages = { young: 'גיל 2–4', mid: 'גיל 5–7', older: 'גיל 8+' };
-  document.getElementById('bb-sub').textContent = `${urls.length} ${acts[state.act]} · ${ages[state.age]}`;
-  document.getElementById('pg-title').textContent = `${urls.length} ${acts[state.act]}`;
+  document.getElementById('bb-sub').textContent = `${urls.length} ${acts[state.act] || 'עמודים'} · ${ages[state.age]}`;
+  document.getElementById('pg-title').textContent = `${urls.length} ${acts[state.act] || 'עמודים'}`;
+  // Story is always ready now (arrives together with images)
+  if (story?.title) {
+    document.getElementById('bb-title').textContent = '📚 ' + story.title;
+    document.getElementById('bm-title').textContent = story.title;
+    setStoryBadge('ready');
+  }
   document.getElementById('pages-grid').innerHTML = urls.map((u, i) => `
     <div class="page-card" onclick="openBookAt(${i})">
       <img src="${u}" alt="עמוד ${i+1}" loading="lazy"/>
@@ -624,7 +633,7 @@ async function downloadPdf() {
     // ── COVER PAGE (text only) ──
     btn.textContent = '⏳ עמוד שער...';
     const ages = { young: '2–4', mid: '5–7', older: '8+' };
-    const acts = { coloring: 'ספר צביעה', dotted: 'חיבור נקודות', maze: 'ספר מבוכים' };
+    const acts = { coloring: 'ספר צביעה', colored: 'ספר איורים', dotted: 'חיבור נקודות', maze: 'ספר מבוכים' };
     const todayStr = new Date().toLocaleDateString('he-IL', { year:'numeric', month:'long', day:'numeric' });
     frame.innerHTML = `<div style="width:${W}px;height:${H}px;background:white;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;direction:rtl;position:relative;padding:60px;">
       <div style="width:100%;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;">
@@ -702,16 +711,6 @@ async function downloadPdf() {
   }
 }
 
-function setStep(s) {
-  ['images','story','done'].forEach((n,i) => {
-    const el = document.getElementById('ls-'+n);
-    el.classList.remove('active','done');
-    const idx = ['images','story','done'].indexOf(s);
-    if (i < idx) el.classList.add('done');
-    else if (i === idx) el.classList.add('active');
-  });
-}
-function setProg(p) { document.getElementById('prog-bar').style.width = p + '%'; }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // ── LOCAL STORAGE / USER TRACKING ──
