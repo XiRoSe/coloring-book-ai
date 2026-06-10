@@ -1,44 +1,51 @@
 import express from 'express';
 import Replicate from 'replicate';
-import { createServer } from 'http';
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use(express.static('public'));
 
 const replicate = new Replicate({ auth: process.env.REPLICATE_API_TOKEN });
 
-// Generate coloring book page
+const STYLE_PROMPTS = {
+  coloring: (subject, age) => {
+    const complexity = age === 'young' ? 'very simple large shapes, minimal detail' : age === 'mid' ? 'medium detail, clear outlines' : 'detailed, intricate patterns';
+    return `children's coloring book page, thick bold black outlines, pure white background, NO color NO shading NO gray fills, clean line art only, ${complexity}, cute friendly illustration of: ${subject}. IMPORTANT: black lines on white only, printable coloring page style`;
+  },
+  dotted: (subject, age) => {
+    const dots = age === 'young' ? '15 to 25 numbered dots' : age === 'mid' ? '30 to 50 numbered dots' : '60 to 100 numbered dots';
+    return `connect the dots activity worksheet for children, white background, ${dots} arranged to form the outline of: ${subject}, large clear black numbered circles, minimal other decoration, printable educational activity sheet, clean professional worksheet design`;
+  },
+  maze: (subject, age) => {
+    const difficulty = age === 'young' ? 'very easy wide paths, simple' : age === 'mid' ? 'medium difficulty' : 'challenging complex';
+    return `${difficulty} maze puzzle for children, white background, black maze walls, clear start and end markers, theme: ${subject}, printable activity worksheet, clean professional design, top-down view`;
+  }
+};
+
 app.post('/api/generate', async (req, res) => {
-  const { prompt, style = 'coloring' } = req.body;
-  if (!prompt) return res.status(400).json({ error: 'Prompt required' });
+  const { subject, style = 'coloring', age = 'mid', count = 1 } = req.body;
+
+  if (!subject?.trim()) return res.status(400).json({ error: 'Subject required' });
+  if (count > 4) return res.status(400).json({ error: 'Max 4 pages at once' });
 
   try {
-    let fullPrompt;
-    if (style === 'coloring') {
-      fullPrompt = `children's coloring book page, thick black outlines, white background, simple clean line art, no shading, no color, black and white only, cute illustration of: ${prompt}. Style: cartoon, simple shapes, bold outlines suitable for coloring`;
-    } else if (style === 'dotted') {
-      fullPrompt = `connect the dots activity page for children, numbered dots forming a cute image of: ${prompt}, white background, black dots with numbers, simple clean design, printable worksheet style`;
-    } else if (style === 'tracing') {
-      fullPrompt = `children's letter tracing worksheet, dashed lines to trace, clean educational layout, white background, printable activity sheet, featuring: ${prompt}`;
-    }
+    const promptFn = STYLE_PROMPTS[style] || STYLE_PROMPTS.coloring;
+    const prompt = promptFn(subject.trim(), age);
 
-    const output = await replicate.run('black-forest-labs/flux-1.1-pro', {
-      input: {
-        prompt: fullPrompt,
-        aspect_ratio: '3:4',
-        output_format: 'png',
-        safety_tolerance: 2
-      }
-    });
+    const promises = Array.from({ length: Math.min(count, 4) }, () =>
+      replicate.run('black-forest-labs/flux-1.1-pro', {
+        input: { prompt, aspect_ratio: '3:4', output_format: 'png', safety_tolerance: 2 }
+      })
+    );
 
-    const imageUrl = Array.isArray(output) ? output[0] : output;
-    res.json({ url: imageUrl });
+    const outputs = await Promise.all(promises);
+    const urls = outputs.map(o => Array.isArray(o) ? o[0] : String(o));
+    res.json({ urls });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
+    console.error('Generate error:', err.message);
+    res.status(500).json({ error: 'שגיאה ביצירת התמונה, נסה שוב' });
   }
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🎨 ציורי running on port ${PORT}`));

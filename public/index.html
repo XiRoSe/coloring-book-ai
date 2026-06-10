@@ -3,354 +3,537 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>📚 יוצר חוברות ילדים</title>
+  <title>ציורי 🎨 — דפי פעילות לילדים</title>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --yellow: #FFD93D;
+      --orange: #FF6B35;
+      --coral: #FF6B6B;
+      --teal: #4ECDC4;
+      --purple: #A855F7;
+      --blue: #3B82F6;
+      --green: #22C55E;
+      --bg: #FFFBF0;
+      --card: #FFFFFF;
+      --text: #1E1E2E;
+      --sub: #6B7280;
+      --border: #E5E7EB;
+      --shadow: 0 4px 24px rgba(0,0,0,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
     body {
       font-family: 'Heebo', sans-serif;
-      background: #fef9f0;
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* Header */
+    /* ===== HEADER ===== */
     header {
       background: white;
-      border-bottom: 3px solid #fde68a;
-      padding: 20px 32px;
-      display: flex; align-items: center; gap: 14px;
+      border-bottom: 3px solid var(--yellow);
+      padding: 0 24px;
+      height: 68px;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     }
-    .logo { font-size: 2rem; }
-    header h1 { font-size: 1.4rem; font-weight: 900; color: #1e293b; }
-    header p { font-size: 0.82rem; color: #64748b; margin-top: 2px; }
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .brand-icon {
+      width: 44px; height: 44px; border-radius: 14px;
+      background: linear-gradient(135deg, var(--yellow), var(--orange));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      box-shadow: 0 3px 10px rgba(255,107,53,0.3);
+    }
+    .brand-name { font-size: 1.5rem; font-weight: 900; color: var(--text); letter-spacing: -0.5px; }
+    .brand-tag { font-size: 0.72rem; color: var(--sub); font-weight: 600; margin-top: -2px; }
+    .header-badge {
+      background: var(--green); color: white;
+      font-size: 0.72rem; font-weight: 700; padding: 5px 12px;
+      border-radius: 99px; letter-spacing: 0.04em;
+    }
 
-    /* Main */
-    main { max-width: 900px; margin: 0 auto; padding: 40px 24px; }
+    /* ===== HERO ===== */
+    .hero {
+      text-align: center; padding: 56px 24px 40px;
+      background: linear-gradient(180deg, #FFFBF0 0%, #FFF9E6 100%);
+      position: relative; overflow: hidden;
+    }
+    .hero-deco {
+      position: absolute; font-size: 5rem; opacity: 0.06;
+      pointer-events: none; user-select: none;
+    }
+    .deco-1 { top: 10px; right: 5%; transform: rotate(15deg); }
+    .deco-2 { top: 20px; left: 5%; transform: rotate(-10deg); }
+    .deco-3 { bottom: 0px; right: 10%; transform: rotate(25deg); }
+    .hero-emoji { font-size: 3.5rem; display: block; margin-bottom: 14px;
+      animation: wiggle 3s ease-in-out infinite; }
+    @keyframes wiggle {
+      0%,100% { transform: rotate(0deg); }
+      25% { transform: rotate(-8deg); }
+      75% { transform: rotate(8deg); }
+    }
+    .hero h1 {
+      font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 900;
+      color: var(--text); letter-spacing: -1px; margin-bottom: 12px;
+    }
+    .hero h1 .highlight { color: var(--orange); }
+    .hero p { font-size: 1rem; color: var(--sub); max-width: 420px; margin: 0 auto; line-height: 1.7; }
 
-    /* Input card */
-    .input-card {
+    /* ===== MAIN ===== */
+    main { max-width: 780px; margin: 0 auto; padding: 32px 20px 80px; }
+
+    /* ===== STEP CARD ===== */
+    .step-card {
       background: white; border-radius: 24px;
-      border: 2px solid #e2e8f0;
-      padding: 32px; margin-bottom: 32px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+      border: 2px solid var(--border);
+      padding: 28px; margin-bottom: 20px;
+      box-shadow: var(--shadow);
     }
-    .input-card h2 { font-size: 1.15rem; font-weight: 800; color: #1e293b; margin-bottom: 20px; }
-
-    /* Style picker */
-    .style-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px;
-    }
-    .style-btn {
-      padding: 14px 10px; border-radius: 14px; border: 2px solid #e2e8f0;
-      background: white; cursor: pointer; text-align: center;
-      transition: all 0.15s; font-family: 'Heebo', sans-serif;
-    }
-    .style-btn:hover { border-color: #fbbf24; background: #fffbeb; }
-    .style-btn.active { border-color: #f59e0b; background: #fef3c7; }
-    .style-icon { font-size: 2rem; display: block; margin-bottom: 6px; }
-    .style-name { font-size: 0.85rem; font-weight: 700; color: #1e293b; }
-    .style-desc { font-size: 0.72rem; color: #64748b; margin-top: 3px; }
-
-    /* Prompt input */
-    .prompt-wrap { position: relative; margin-bottom: 20px; }
-    textarea {
-      width: 100%; padding: 16px 18px; border-radius: 14px;
-      border: 2px solid #e2e8f0; font-family: 'Heebo', sans-serif;
-      font-size: 0.95rem; resize: none; direction: rtl;
-      transition: border-color 0.15s; background: #f8fafc;
-      color: #1e293b; line-height: 1.6;
-    }
-    textarea:focus { outline: none; border-color: #fbbf24; background: white; }
-    textarea::placeholder { color: #94a3b8; }
-
-    /* Pages count */
-    .count-row {
+    .step-header {
       display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
     }
-    .count-row label { font-size: 0.88rem; font-weight: 700; color: #475569; }
-    .count-btns { display: flex; gap: 6px; }
-    .count-btn {
-      width: 36px; height: 36px; border-radius: 99px;
-      border: 2px solid #e2e8f0; background: white;
-      font-weight: 700; font-size: 0.9rem; cursor: pointer;
-      transition: all 0.15s; font-family: 'Heebo', sans-serif;
+    .step-num {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--yellow), var(--orange));
       display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; font-weight: 900; color: white; flex-shrink: 0;
     }
-    .count-btn.active { border-color: #f59e0b; background: #fef3c7; color: #92400e; }
+    .step-title { font-size: 1rem; font-weight: 800; color: var(--text); }
+    .step-sub { font-size: 0.78rem; color: var(--sub); margin-top: 1px; }
 
-    /* Generate button */
-    .btn-generate {
-      width: 100%; padding: 16px; border-radius: 14px; border: none;
-      background: linear-gradient(135deg, #f59e0b, #ef4444);
-      color: white; font-family: 'Heebo', sans-serif;
-      font-size: 1rem; font-weight: 800; cursor: pointer;
-      transition: opacity 0.15s, transform 0.15s;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
+    /* ===== ACTIVITY TYPE ===== */
+    .activity-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
     }
-    .btn-generate:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
-    .btn-generate:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .act-btn {
+      padding: 18px 10px; border-radius: 16px;
+      border: 2.5px solid var(--border); background: white;
+      cursor: pointer; text-align: center; transition: all 0.18s;
+      font-family: 'Heebo', sans-serif;
+    }
+    .act-btn:hover { transform: translateY(-2px); }
+    .act-btn.active { border-color: var(--orange); background: #FFF3E6;
+      box-shadow: 0 4px 16px rgba(255,107,53,0.2); }
+    .act-icon { font-size: 2.2rem; display: block; margin-bottom: 8px; }
+    .act-name { font-size: 0.88rem; font-weight: 800; color: var(--text); }
+    .act-desc { font-size: 0.7rem; color: var(--sub); margin-top: 3px; line-height: 1.4; }
 
-    /* Examples */
-    .examples { margin-top: 16px; }
-    .examples-label { font-size: 0.75rem; font-weight: 700; color: #94a3b8; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em; }
-    .examples-row { display: flex; flex-wrap: wrap; gap: 8px; }
-    .example-chip {
-      padding: 6px 14px; border-radius: 99px; border: 1.5px solid #e2e8f0;
-      background: white; font-size: 0.8rem; font-family: 'Heebo', sans-serif;
-      color: #475569; cursor: pointer; transition: all 0.12s;
+    /* ===== THEME QUICK PICKS ===== */
+    .themes-row {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
     }
-    .example-chip:hover { border-color: #fbbf24; color: #92400e; background: #fffbeb; }
+    .theme-chip {
+      padding: 8px 16px; border-radius: 99px; border: 2px solid var(--border);
+      background: white; font-size: 0.82rem; font-weight: 700;
+      color: var(--sub); cursor: pointer; transition: all 0.15s;
+      font-family: 'Heebo', sans-serif;
+    }
+    .theme-chip:hover { border-color: var(--teal); color: #0f766e; background: #f0fafa; }
+    .theme-chip.active { border-color: var(--teal); background: #f0fafa; color: #0f766e; }
 
-    /* Progress */
-    .progress-wrap {
-      display: none; text-align: center; padding: 32px;
-      background: white; border-radius: 24px; border: 2px solid #e2e8f0;
-      margin-bottom: 32px;
+    /* ===== TEXT INPUT ===== */
+    .input-group { position: relative; }
+    .input-group input {
+      width: 100%; padding: 15px 18px; border-radius: 14px;
+      border: 2px solid var(--border); font-family: 'Heebo', sans-serif;
+      font-size: 0.95rem; color: var(--text); background: #F9FAFB;
+      direction: rtl; transition: border-color 0.15s, background 0.15s;
     }
-    .progress-wrap.show { display: block; }
-    .progress-anim { font-size: 3rem; animation: spin 1.5s linear infinite; display: inline-block; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .progress-text { font-size: 1rem; font-weight: 700; color: #475569; margin-top: 16px; }
-    .progress-bar-wrap { background: #f1f5f9; border-radius: 99px; height: 8px; margin: 16px auto; max-width: 300px; }
-    .progress-bar { background: linear-gradient(90deg, #f59e0b, #ef4444); height: 100%; border-radius: 99px; transition: width 0.5s; width: 0%; }
-    .progress-sub { font-size: 0.8rem; color: #94a3b8; }
+    .input-group input:focus {
+      outline: none; border-color: var(--orange); background: white;
+    }
+    .input-group input::placeholder { color: #9CA3AF; }
+    .input-hint { font-size: 0.72rem; color: var(--sub); margin-top: 6px; }
 
-    /* Results grid */
-    .results { display: none; }
-    .results.show { display: block; }
-    .results-header {
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
+    /* ===== AGE ===== */
+    .age-row { display: flex; gap: 10px; }
+    .age-btn {
+      flex: 1; padding: 12px 8px; border-radius: 12px;
+      border: 2px solid var(--border); background: white;
+      cursor: pointer; font-family: 'Heebo', sans-serif;
+      text-align: center; transition: all 0.15s;
     }
-    .results-header h2 { font-size: 1.1rem; font-weight: 800; color: #1e293b; }
-    .btn-download-all {
-      padding: 10px 22px; border-radius: 99px; border: none;
-      background: #1e293b; color: white; font-family: 'Heebo', sans-serif;
+    .age-btn:hover { border-color: var(--purple); }
+    .age-btn.active { border-color: var(--purple); background: #F5F3FF; }
+    .age-emoji { font-size: 1.5rem; display: block; margin-bottom: 5px; }
+    .age-label { font-size: 0.8rem; font-weight: 800; color: var(--text); }
+    .age-range { font-size: 0.68rem; color: var(--sub); }
+
+    /* ===== COUNT ===== */
+    .count-pills { display: flex; gap: 8px; }
+    .count-pill {
+      padding: 9px 22px; border-radius: 99px; border: 2px solid var(--border);
+      background: white; font-family: 'Heebo', sans-serif;
       font-size: 0.85rem; font-weight: 700; cursor: pointer;
+      transition: all 0.15s; color: var(--sub);
+    }
+    .count-pill:hover { border-color: var(--blue); color: var(--blue); }
+    .count-pill.active { border-color: var(--blue); background: #EFF6FF; color: var(--blue); }
+
+    /* ===== GENERATE BUTTON ===== */
+    .btn-generate {
+      width: 100%; padding: 18px; border-radius: 16px; border: none;
+      background: linear-gradient(135deg, var(--orange), var(--coral));
+      color: white; font-family: 'Heebo', sans-serif;
+      font-size: 1.05rem; font-weight: 900; cursor: pointer; letter-spacing: 0.02em;
+      box-shadow: 0 6px 24px rgba(255,107,53,0.4);
+      transition: all 0.2s; display: flex; align-items: center;
+      justify-content: center; gap: 10px;
+    }
+    .btn-generate:hover:not(:disabled) {
+      transform: translateY(-2px); box-shadow: 0 10px 32px rgba(255,107,53,0.5);
+    }
+    .btn-generate:active:not(:disabled) { transform: translateY(0); }
+    .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* ===== PROGRESS ===== */
+    .progress-section {
+      display: none; background: white; border-radius: 24px;
+      border: 2px solid var(--border); padding: 40px 24px;
+      text-align: center; margin-bottom: 20px; box-shadow: var(--shadow);
+    }
+    .progress-section.show { display: block; }
+    .crayon-anim {
+      font-size: 3.5rem; display: inline-block;
+      animation: draw 0.6s ease-in-out infinite alternate;
+    }
+    @keyframes draw {
+      from { transform: rotate(-15deg) translateX(-4px); }
+      to   { transform: rotate(15deg) translateX(4px); }
+    }
+    .progress-title { font-size: 1.1rem; font-weight: 800; color: var(--text); margin: 16px 0 4px; }
+    .progress-sub { font-size: 0.82rem; color: var(--sub); }
+    .progress-track { background: #F3F4F6; border-radius: 99px; height: 10px; max-width: 280px; margin: 20px auto 0; }
+    .progress-fill { height: 100%; border-radius: 99px; width: 0%; transition: width 0.5s;
+      background: linear-gradient(90deg, var(--yellow), var(--orange)); }
+
+    /* ===== RESULTS ===== */
+    .results-section { display: none; }
+    .results-section.show { display: block; }
+    .results-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+    }
+    .results-title { font-size: 1.1rem; font-weight: 900; color: var(--text); }
+    .btn-download-all {
+      padding: 10px 20px; border-radius: 99px; border: none;
+      background: var(--text); color: white; font-family: 'Heebo', sans-serif;
+      font-size: 0.82rem; font-weight: 700; cursor: pointer;
       display: flex; align-items: center; gap: 6px;
       transition: background 0.15s;
     }
-    .btn-download-all:hover { background: #334155; }
+    .btn-download-all:hover { background: #374151; }
 
-    .pages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .pages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+
     .page-card {
-      background: white; border-radius: 18px; border: 2px solid #e2e8f0;
-      overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.06);
-      transition: transform 0.2s, box-shadow 0.2s;
+      background: white; border-radius: 18px;
+      border: 2px solid var(--border); overflow: hidden;
+      box-shadow: var(--shadow); transition: transform 0.2s, box-shadow 0.2s;
     }
-    .page-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+    .page-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.12); }
     .page-card img { width: 100%; display: block; aspect-ratio: 3/4; object-fit: cover; }
+
     .page-card-footer {
-      padding: 12px 14px;
-      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 12px; display: flex;
+      align-items: center; justify-content: space-between;
+      border-top: 1px solid var(--border);
     }
-    .page-num { font-size: 0.8rem; font-weight: 700; color: #94a3b8; }
+    .page-label { font-size: 0.75rem; font-weight: 700; color: var(--sub); }
     .btn-dl {
-      padding: 6px 14px; border-radius: 99px; border: 1.5px solid #e2e8f0;
+      padding: 5px 14px; border-radius: 99px; border: 1.5px solid var(--border);
       background: white; font-family: 'Heebo', sans-serif;
-      font-size: 0.75rem; font-weight: 700; cursor: pointer; color: #475569;
-      transition: all 0.12s; text-decoration: none; display: inline-block;
+      font-size: 0.72rem; font-weight: 700; cursor: pointer;
+      color: var(--sub); transition: all 0.12s; text-decoration: none;
     }
-    .btn-dl:hover { border-color: #fbbf24; background: #fffbeb; color: #92400e; }
+    .btn-dl:hover { border-color: var(--orange); color: var(--orange); }
 
-    /* Loading placeholder */
-    .page-placeholder {
-      background: #f8fafc; border-radius: 18px; border: 2px dashed #e2e8f0;
-      aspect-ratio: 3/4; display: flex; align-items: center; justify-content: center;
-      font-size: 2rem; animation: pulse 1.5s ease-in-out infinite;
+    .page-loading {
+      aspect-ratio: 3/4; background: linear-gradient(135deg, #F9FAFB, #F3F4F6);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 10px;
     }
-    @keyframes pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+    .page-loading-icon { font-size: 2.5rem; animation: bounce 1s ease-in-out infinite; }
+    @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .page-loading-text { font-size: 0.75rem; color: var(--sub); font-weight: 600; }
 
-    @media (max-width: 600px) {
-      .style-grid { grid-template-columns: 1fr 1fr; }
-      .count-row { flex-wrap: wrap; }
+    /* ===== PRINT TIP ===== */
+    .print-tip {
+      background: #FFFBEB; border: 1.5px solid var(--yellow);
+      border-radius: 14px; padding: 14px 18px;
+      display: flex; gap: 10px; align-items: flex-start; margin-top: 16px;
+    }
+    .print-tip-icon { font-size: 1.2rem; flex-shrink: 0; }
+    .print-tip-text { font-size: 0.8rem; color: #92400E; line-height: 1.6; }
+
+    /* ===== FOOTER ===== */
+    footer { text-align: center; padding: 32px 24px; color: var(--sub); font-size: 0.78rem; }
+
+    @media (max-width: 520px) {
+      .activity-grid { grid-template-columns: 1fr 1fr; }
+      .act-btn:last-child { grid-column: 1 / -1; }
+      .age-row { flex-wrap: wrap; }
+      .age-btn { min-width: calc(50% - 5px); }
     }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">🎨</div>
-  <div>
-    <h1>יוצר חוברות ילדים</h1>
-    <p>צביעה · חיבור נקודות · דפי פעילות — מוכן להדפסה</p>
+  <div class="brand">
+    <div class="brand-icon">🖍️</div>
+    <div>
+      <div class="brand-name">ציורי</div>
+      <div class="brand-tag">דפי פעילות לילדים בלחיצה אחת</div>
+    </div>
   </div>
+  <div class="header-badge">✨ חינמי לגמרי</div>
 </header>
 
+<div class="hero">
+  <span class="hero-deco deco-1">🎨</span>
+  <span class="hero-deco deco-2">🖍️</span>
+  <span class="hero-deco deco-3">✏️</span>
+  <span class="hero-emoji">🖍️</span>
+  <h1>דפי פעילות <span class="highlight">קסומים</span><br/>לילדים שלכם</h1>
+  <p>בחרו נושא, לחצו צור — ותוך שניות יש לכם דף מוכן להדפסה 🖨️</p>
+</div>
+
 <main>
-  <div class="input-card">
-    <h2>✏️ בחר סוג ותאר מה תרצה</h2>
-
-    <div class="style-grid">
-      <button class="style-btn active" data-style="coloring" onclick="selectStyle(this)">
-        <span class="style-icon">🖍️</span>
-        <div class="style-name">דפי צביעה</div>
-        <div class="style-desc">קווים עבים לצביעה</div>
-      </button>
-      <button class="style-btn" data-style="dotted" onclick="selectStyle(this)">
-        <span class="style-icon">🔢</span>
-        <div class="style-name">חיבור נקודות</div>
-        <div class="style-desc">נקודות ממוספרות</div>
-      </button>
-      <button class="style-btn" data-style="tracing" onclick="selectStyle(this)">
-        <span class="style-icon">✍️</span>
-        <div class="style-name">דפי עקיבה</div>
-        <div class="style-desc">קווים מקווקווים</div>
-      </button>
-    </div>
-
-    <div class="prompt-wrap">
-      <textarea id="prompt" rows="3" placeholder="לדוגמה: דינוזאורים חמודים ביער, כלבלב משחק בפארק, נסיכה עם חד קרן..."></textarea>
-    </div>
-
-    <div class="count-row">
-      <label>מספר דפים:</label>
-      <div class="count-btns">
-        <button class="count-btn" onclick="setCount(1)">1</button>
-        <button class="count-btn active" onclick="setCount(2)">2</button>
-        <button class="count-btn" onclick="setCount(4)">4</button>
-        <button class="count-btn" onclick="setCount(6)">6</button>
+  <!-- Step 1: Activity Type -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title">מה נעשה היום?</div>
+        <div class="step-sub">בחרו את סוג הפעילות</div>
       </div>
     </div>
-
-    <button class="btn-generate" onclick="generate()">
-      <span>🎨</span> צור חוברת
-    </button>
-
-    <div class="examples">
-      <div class="examples-label">דוגמאות מהירות</div>
-      <div class="examples-row">
-        <button class="example-chip" onclick="setExample(this)">🦁 אריה בג'ונגל</button>
-        <button class="example-chip" onclick="setExample(this)">🦋 פרפרים ופרחים</button>
-        <button class="example-chip" onclick="setExample(this)">🚂 רכבת קיטור</button>
-        <button class="example-chip" onclick="setExample(this)">🧜 בת ים</button>
-        <button class="example-chip" onclick="setExample(this)">🚀 חללאים וחלל</button>
-        <button class="example-chip" onclick="setExample(this)">🐉 דרקון ידידותי</button>
-      </div>
+    <div class="activity-grid">
+      <button class="act-btn active" data-act="coloring" onclick="selectActivity(this)">
+        <span class="act-icon">🎨</span>
+        <div class="act-name">דף צביעה</div>
+        <div class="act-desc">איור לצביעה עם קווים עבים</div>
+      </button>
+      <button class="act-btn" data-act="dotted" onclick="selectActivity(this)">
+        <span class="act-icon">🔢</span>
+        <div class="act-name">חיבור נקודות</div>
+        <div class="act-desc">נקודות ממוספרות לחיבור</div>
+      </button>
+      <button class="act-btn" data-act="maze" onclick="selectActivity(this)">
+        <span class="act-icon">🌀</span>
+        <div class="act-name">מבוך</div>
+        <div class="act-desc">מבוך כיפי לפתרון</div>
+      </button>
     </div>
   </div>
 
+  <!-- Step 2: Subject -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title">מה הנושא?</div>
+        <div class="step-sub">בחרו מהירה או כתבו בעצמכם</div>
+      </div>
+    </div>
+    <div class="themes-row" id="themes">
+      <button class="theme-chip" onclick="pickTheme(this, '🦁 אריה חמוד')">🦁 אריה</button>
+      <button class="theme-chip" onclick="pickTheme(this, '🐘 פיל עם ידידים')">🐘 פיל</button>
+      <button class="theme-chip" onclick="pickTheme(this, '🦋 פרפר בגינה פורחת')">🦋 פרפרים</button>
+      <button class="theme-chip" onclick="pickTheme(this, '🚂 רכבת קיטור בהרים')">🚂 רכבת</button>
+      <button class="theme-chip" onclick="pickTheme(this, '🧜 בת ים מתחת לים')">🧜 בת ים</button>
+      <button class="theme-chip" onclick="pickTheme(this, '🚀 חללאי ילד בחלל')">🚀 חלל</button>
+      <button class="theme-chip" onclick="pickTheme(this, '🐉 דרקון ידידותי')">🐉 דרקון</button>
+      <button class="theme-chip" onclick="pickTheme(this, '👸 נסיכה בטירה')">👸 נסיכה</button>
+      <button class="theme-chip" onclick="pickTheme(this, '🦕 דינוזאורים חמודים')">🦕 דינוזאורים</button>
+      <button class="theme-chip" onclick="pickTheme(this, '🌊 דגים ואלמוגים בים')">🌊 ים</button>
+    </div>
+    <div class="input-group">
+      <input type="text" id="subject" placeholder="או כתבו נושא משלכם — כלבלב בפארק, חד קרן בעצים..." maxlength="120"/>
+    </div>
+    <div class="input-hint">💡 ניתן לכתוב בעברית או אנגלית</div>
+  </div>
+
+  <!-- Step 3: Age -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title">גיל הילד/ה</div>
+        <div class="step-sub">נתאים את הרמה בהתאם</div>
+      </div>
+    </div>
+    <div class="age-row">
+      <button class="age-btn" data-age="young" onclick="selectAge(this)">
+        <span class="age-emoji">🐣</span>
+        <div class="age-label">קטנטנים</div>
+        <div class="age-range">גיל 2–4</div>
+      </button>
+      <button class="age-btn active" data-age="mid" onclick="selectAge(this)">
+        <span class="age-emoji">🌟</span>
+        <div class="age-label">גדולים קצת</div>
+        <div class="age-range">גיל 5–7</div>
+      </button>
+      <button class="age-btn" data-age="older" onclick="selectAge(this)">
+        <span class="age-emoji">🏆</span>
+        <div class="age-label">מאתגרים</div>
+        <div class="age-range">גיל 8+</div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Step 4: Count -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div>
+        <div class="step-title">כמה דפים?</div>
+        <div class="step-sub">כל דף ייוצר בנפרד עם וריאציה</div>
+      </div>
+    </div>
+    <div class="count-pills">
+      <button class="count-pill active" onclick="setCount(1, this)">1 דף</button>
+      <button class="count-pill" onclick="setCount(2, this)">2 דפים</button>
+      <button class="count-pill" onclick="setCount(4, this)">4 דפים</button>
+    </div>
+  </div>
+
+  <!-- Generate -->
+  <button class="btn-generate" id="gen-btn" onclick="generate()">
+    <span id="gen-icon">✨</span>
+    <span id="gen-text">צרו לי דפים!</span>
+  </button>
+
   <!-- Progress -->
-  <div class="progress-wrap" id="progress">
-    <div class="progress-anim">🎨</div>
-    <div class="progress-text" id="progress-text">יוצר דפים...</div>
-    <div class="progress-bar-wrap"><div class="progress-bar" id="progress-bar"></div></div>
-    <div class="progress-sub" id="progress-sub">זה לוקח כ-20-30 שניות לדף</div>
+  <div class="progress-section" id="progress">
+    <div class="crayon-anim">🖍️</div>
+    <div class="progress-title" id="prog-title">יוצר דפים מדהימים...</div>
+    <div class="progress-sub" id="prog-sub">זה לוקח כ-20-30 שניות</div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
   </div>
 
   <!-- Results -->
-  <div class="results" id="results">
+  <div class="results-section" id="results">
     <div class="results-header">
-      <h2 id="results-title">🖼️ החוברת שלך מוכנה!</h2>
-      <button class="btn-download-all" onclick="downloadAll()">⬇️ הורד הכל</button>
+      <div class="results-title" id="res-title">🎉 מוכן להדפסה!</div>
+      <button class="btn-download-all" onclick="dlAll()">⬇️ הורד הכל</button>
     </div>
     <div class="pages-grid" id="pages-grid"></div>
+    <div class="print-tip">
+      <div class="print-tip-icon">🖨️</div>
+      <div class="print-tip-text">
+        <b>טיפ להדפסה:</b> הדפיסו על נייר A4 רגיל, בשחור-לבן מספיק! לתוצאה הכי טובה הגדירו "מלא דף" בהגדרות המדפסת.
+      </div>
+    </div>
   </div>
 </main>
 
+<footer>
+  🖍️ ציורי — דפי פעילות חינמיים לילדים &nbsp;·&nbsp; נוצר עם ❤️ ובינה מלאכותית
+</footer>
+
 <script>
-let selectedStyle = 'coloring';
-let selectedCount = 2;
-let generatedImages = [];
+let state = { act: 'coloring', age: 'mid', count: 1 };
+let generatedUrls = [];
 
-function selectStyle(btn) {
-  document.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+function selectActivity(btn) {
+  document.querySelectorAll('.act-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  selectedStyle = btn.dataset.style;
+  state.act = btn.dataset.act;
 }
-
-function setCount(n) {
-  selectedCount = n;
-  document.querySelectorAll('.count-btn').forEach(b => {
-    b.classList.toggle('active', parseInt(b.textContent) === n);
-  });
+function selectAge(btn) {
+  document.querySelectorAll('.age-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state.age = btn.dataset.age;
 }
-
-function setExample(btn) {
-  document.getElementById('prompt').value = btn.textContent.replace(/^[^ ]+ /, '').trim();
-  btn.textContent.includes('🦁') ? document.getElementById('prompt').value = 'אריה חמוד ביער עם עצים גדולים' :
-  btn.textContent.includes('🦋') ? document.getElementById('prompt').value = 'פרפרים צבעוניים מעל שדה פרחים' :
-  btn.textContent.includes('🚂') ? document.getElementById('prompt').value = 'רכבת קיטור עוברת בין הרים' :
-  btn.textContent.includes('🧜') ? document.getElementById('prompt').value = 'בת ים מתחת לים עם דגים ואלמוגים' :
-  btn.textContent.includes('🚀') ? document.getElementById('prompt').value = 'חללאי חמוד על הירח עם כוכבים' :
-  document.getElementById('prompt').value = 'דרקון ידידותי עם ילדה קטנה ביער קסום';
+function setCount(n, btn) {
+  state.count = n;
+  document.querySelectorAll('.count-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function pickTheme(btn, val) {
+  document.querySelectorAll('.theme-chip').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('subject').value = val;
 }
 
 async function generate() {
-  const prompt = document.getElementById('prompt').value.trim();
-  if (!prompt) { alert('נא להכניס תיאור!'); return; }
-
-  generatedImages = [];
-  const btn = document.querySelector('.btn-generate');
-  btn.disabled = true;
-  document.getElementById('results').classList.remove('show');
-  document.getElementById('progress').classList.add('show');
-
-  const grid = document.getElementById('pages-grid');
-  grid.innerHTML = '';
-
-  // Show placeholders
-  for (let i = 0; i < selectedCount; i++) {
-    const ph = document.createElement('div');
-    ph.className = 'page-placeholder';
-    ph.id = `placeholder-${i}`;
-    ph.innerHTML = '🎨';
-    grid.appendChild(ph);
+  const subject = document.getElementById('subject').value.trim();
+  if (!subject) {
+    document.getElementById('subject').focus();
+    document.getElementById('subject').style.borderColor = '#EF4444';
+    setTimeout(() => document.getElementById('subject').style.borderColor = '', 1500);
+    return;
   }
 
-  let done = 0;
-  const updateProgress = () => {
-    const pct = Math.round((done / selectedCount) * 100);
-    document.getElementById('progress-bar').style.width = pct + '%';
-    document.getElementById('progress-text').textContent = `יוצר דף ${done + 1} מתוך ${selectedCount}...`;
-  };
-  updateProgress();
+  generatedUrls = [];
+  const genBtn = document.getElementById('gen-btn');
+  genBtn.disabled = true;
+  document.getElementById('gen-text').textContent = 'יוצר...';
 
-  // Generate all pages in parallel
-  const promises = Array.from({ length: selectedCount }, (_, i) =>
-    fetch('/api/generate', {
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('progress').classList.add('show');
+  document.getElementById('prog-fill').style.width = '5%';
+
+  try {
+    const resp = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, style: selectedStyle })
-    })
-    .then(r => r.json())
-    .then(data => {
-      done++;
-      updateProgress();
-      const ph = document.getElementById(`placeholder-${i}`);
-      if (data.url) {
-        generatedImages.push({ url: data.url, index: i });
-        const card = document.createElement('div');
-        card.className = 'page-card';
-        card.innerHTML = `
-          <img src="${data.url}" alt="דף ${i + 1}" loading="lazy"/>
-          <div class="page-card-footer">
-            <span class="page-num">דף ${i + 1}</span>
-            <a href="${data.url}" download="page-${i+1}.png" class="btn-dl" target="_blank">⬇️ הורד</a>
-          </div>`;
-        ph.replaceWith(card);
-      } else {
-        ph.innerHTML = '❌';
-      }
-    })
-    .catch(() => { done++; updateProgress(); })
-  );
+      body: JSON.stringify({ subject, style: state.act, age: state.age, count: state.count })
+    });
+    document.getElementById('prog-fill').style.width = '90%';
+    const data = await resp.json();
 
-  await Promise.all(promises);
+    if (!resp.ok || !data.urls) throw new Error(data.error || 'שגיאה');
 
-  document.getElementById('progress').classList.remove('show');
-  document.getElementById('results').classList.add('show');
-  document.getElementById('results-title').textContent = `🖼️ ${selectedCount} דפים מוכנים להדפסה!`;
-  btn.disabled = false;
+    generatedUrls = data.urls;
+    document.getElementById('prog-fill').style.width = '100%';
+    renderResults(data.urls, subject);
+  } catch (e) {
+    alert('שגיאה: ' + e.message);
+  } finally {
+    document.getElementById('progress').classList.remove('show');
+    genBtn.disabled = false;
+    document.getElementById('gen-text').textContent = 'צרו לי דפים!';
+    document.getElementById('gen-icon').textContent = '✨';
+  }
 }
 
-async function downloadAll() {
-  for (const img of generatedImages) {
+function renderResults(urls, subject) {
+  const grid = document.getElementById('pages-grid');
+  const actLabels = { coloring: 'דף צביעה', dotted: 'חיבור נקודות', maze: 'מבוך' };
+  grid.innerHTML = urls.map((url, i) => `
+    <div class="page-card">
+      <img src="${url}" alt="דף ${i+1}" loading="lazy"/>
+      <div class="page-card-footer">
+        <span class="page-label">${actLabels[state.act] || 'דף'} ${i+1}</span>
+        <a href="${url}" download="tziyuri-${i+1}.png" class="btn-dl" target="_blank">⬇️ הורד</a>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('res-title').textContent = `🎉 ${urls.length} ${urls.length === 1 ? 'דף מוכן' : 'דפים מוכנים'} להדפסה!`;
+  document.getElementById('results').classList.add('show');
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+async function dlAll() {
+  for (let i = 0; i < generatedUrls.length; i++) {
     const a = document.createElement('a');
-    a.href = img.url;
-    a.download = `coloring-page-${img.index + 1}.png`;
+    a.href = generatedUrls[i];
+    a.download = `tziyuri-page-${i+1}.png`;
     a.target = '_blank';
     a.click();
-    await new Promise(r => setTimeout(r, 300));
+    await new Promise(r => setTimeout(r, 400));
   }
 }
 </script>
