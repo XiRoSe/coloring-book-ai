@@ -692,11 +692,12 @@ async function downloadPdf() {
     frame.style.cssText = `position:absolute;left:-9999px;top:0;width:${W}px;overflow:hidden;background:white;font-family:Heebo,Arial,sans-serif;`;
     document.body.appendChild(frame);
 
-    // ── COVER PAGE (text only) ──
+    // ── COVER PAGE (page 0, unnumbered) ──
     btn.textContent = '⏳ עמוד שער...';
     const ages = { young: '2–4', mid: '5–7', older: '8+' };
     const acts = { coloring: 'ספר צביעה', colored: 'ספר איורים', dotted: 'חיבור נקודות', maze: 'ספר מבוכים' };
     const todayStr = new Date().toLocaleDateString('he-IL', { year:'numeric', month:'long', day:'numeric' });
+    const totalPages = total + (s?.moral ? 1 : 0); // content pages + optional moral page
     frame.innerHTML = `<div style="width:${W}px;height:${H}px;background:white;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;direction:rtl;position:relative;padding:60px;">
       <div style="width:100%;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;">
         <div style="font-size:16px;font-weight:700;color:#9CA3AF;letter-spacing:3px;text-transform:uppercase;margin-bottom:32px;">${acts[state.act] || 'ספר פעילות'}</div>
@@ -708,14 +709,14 @@ async function downloadPdf() {
         <div style="font-size:15px;font-weight:800;color:#FF6B35;letter-spacing:-0.5px;">📚 Sefer</div>
       </div>
     </div>`;
-    await new Promise(res => setTimeout(res, 150));
+    await new Promise(r => setTimeout(r, 150));
     const coverCanvas = await html2canvas(frame.firstElementChild, { scale: 1, useCORS: true, backgroundColor: '#ffffff', width: W, height: H, windowWidth: W, windowHeight: H });
     doc.addImage(coverCanvas.toDataURL('image/jpeg', .92), 'JPEG', 0, 0, 595, 842);
 
+    // ── CONTENT PAGES (numbered 1..total) ──
     for (let i = 0; i < total; i++) {
-      btn.textContent = `⏳ עמוד ${i+1}/${total}...`;
+      btn.textContent = `⏳ עמוד ${i+1}/${totalPages}...`;
       const text = s?.pages?.[i]?.text || '';
-      const isLast = i === total - 1;
       const src = `/api/proxy-image?url=${encodeURIComponent(urls[i])}`;
 
       frame.innerHTML = `<div style="width:${W}px;height:${H}px;background:white;padding:38px 50px;box-sizing:border-box;direction:rtl;position:relative;">
@@ -724,24 +725,49 @@ async function downloadPdf() {
             <div style="width:6px;height:44px;background:#FF6B35;border-radius:3px;flex-shrink:0;"></div>
             <div style="font-size:28px;font-weight:900;color:#111827;">${s?.title || ''}</div>
           </div>
-          <div style="font-size:18px;font-weight:700;color:#9CA3AF;">${i+1} / ${total}</div>
+          <div style="font-size:18px;font-weight:700;color:#9CA3AF;">${i+1} / ${totalPages}</div>
         </div>
-        <img src="${src}" style="width:100%;height:560px;object-fit:contain;display:block;border-radius:14px;background:#FAFAFA;"/>
+        <img src="${src}" style="width:100%;height:560px;object-fit:contain;display:block;border-radius:14px;background:#FAFAFA;" crossorigin="anonymous"/>
         ${text ? `<p style="font-size:22px;line-height:1.9;color:#111827;margin-top:22px;text-align:right;font-weight:500;">${text}</p>` : ''}
-        ${isLast && s?.moral ? `<div style="background:#FFFBEB;border:2px solid #FDE68A;border-radius:12px;padding:16px 20px;margin-top:16px;font-size:20px;font-weight:800;color:#92400E;direction:rtl;">⭐ ${s.moral}</div>` : ''}
         <div style="position:absolute;bottom:22px;left:0;right:0;text-align:center;font-size:13px;color:#D1D5DB;direction:ltr;">📚 Sefer · sefer.app</div>
       </div>`;
 
-      await new Promise(res => {
+      await new Promise(r => {
         const img = frame.querySelector('img');
-        const done = () => setTimeout(res, 150); // small delay after load before canvas capture
+        const done = () => setTimeout(r, 200);
         if (img.complete && img.naturalHeight > 0) done();
-        else { img.onload = done; img.onerror = done; setTimeout(res, 12000); }
+        else { img.onload = done; img.onerror = done; setTimeout(r, 12000); }
       });
 
       const canvas = await html2canvas(frame.firstElementChild, { scale: 1, useCORS: true, allowTaint: false, backgroundColor: '#ffffff', width: W, height: H, windowWidth: W, windowHeight: H });
       doc.addPage();
       doc.addImage(canvas.toDataURL('image/jpeg', .92), 'JPEG', 0, 0, 595, 842);
+    }
+
+    // ── MORAL PAGE (last page, numbered totalPages) ──
+    if (s?.moral) {
+      btn.textContent = `⏳ עמוד ${totalPages}/${totalPages}...`;
+      frame.innerHTML = `<div style="width:${W}px;height:${H}px;background:white;padding:60px 70px;box-sizing:border-box;direction:rtl;display:flex;flex-direction:column;position:relative;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:40px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:6px;height:44px;background:#FF6B35;border-radius:3px;flex-shrink:0;"></div>
+            <div style="font-size:28px;font-weight:900;color:#111827;">${s?.title || ''}</div>
+          </div>
+          <div style="font-size:18px;font-weight:700;color:#9CA3AF;">${totalPages} / ${totalPages}</div>
+        </div>
+        <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:40px;">
+          <div style="font-size:90px;line-height:1;">⭐</div>
+          <div style="background:#FFFBEB;border:3px solid #FDE68A;border-radius:20px;padding:40px 50px;text-align:center;">
+            <div style="font-size:18px;font-weight:700;color:#B45309;letter-spacing:2px;margin-bottom:16px;">מוסר השכל</div>
+            <div style="font-size:32px;font-weight:800;color:#92400E;line-height:1.6;">${s.moral.replace(/^מוסר השכל:?\s*/i,'')}</div>
+          </div>
+        </div>
+        <div style="position:absolute;bottom:22px;left:0;right:0;text-align:center;font-size:13px;color:#D1D5DB;direction:ltr;">📚 Sefer · sefer.app</div>
+      </div>`;
+      await new Promise(r => setTimeout(r, 150));
+      const moralCanvas = await html2canvas(frame.firstElementChild, { scale: 1, useCORS: true, backgroundColor: '#ffffff', width: W, height: H, windowWidth: W, windowHeight: H });
+      doc.addPage();
+      doc.addImage(moralCanvas.toDataURL('image/jpeg', .92), 'JPEG', 0, 0, 595, 842);
     }
 
     document.body.removeChild(frame);

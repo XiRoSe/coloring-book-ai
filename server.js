@@ -138,16 +138,16 @@ Return ONLY valid JSON, no markdown, no extra text:
   }
 
   // Step 2: Generate images in parallel — each gets characters + unique scene prompt
-  // Same seed across all pages → consistent character style
+  // No shared seed: character description in prompt provides visual consistency,
+  // while unique seeds allow varied scene compositions
   const styleSuffix = STYLE_SUFFIX[style]?.(age) || STYLE_SUFFIX.coloring(age);
-  const seed = Math.floor(Math.random() * 999999) + 1;
 
   try {
     const imageUrls = await Promise.all(
       plan.pages.map(p => {
         const prompt = `${plan.characters}, ${p.image_prompt}, ${styleSuffix}`;
         return replicate.run('black-forest-labs/flux-1.1-pro', {
-          input: { prompt, aspect_ratio: '3:4', output_format: 'png', safety_tolerance: 5, seed }
+          input: { prompt, aspect_ratio: '3:4', output_format: 'png', safety_tolerance: 5 }
         }).then(o => Array.isArray(o) ? o[0] : String(o));
       })
     );
@@ -167,6 +167,7 @@ app.get('/api/proxy-image', async (req, res) => {
     const buf = await fetchBuffer(url);
     res.setHeader('Content-Type', 'image/png');
     res.setHeader('Cache-Control', 'public, max-age=3600');
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.send(buf);
   } catch { res.status(500).send('fetch failed'); }
 });
