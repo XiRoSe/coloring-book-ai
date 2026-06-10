@@ -181,6 +181,16 @@
     .bp-text{font-size:.98rem;line-height:1.85;color:var(--text);font-weight:500}
     .bp-moral{display:none;margin-top:11px;padding:11px 14px;background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:10px;font-size:.83rem;font-weight:700;color:#92400E;line-height:1.55}
     .bp-moral.show{display:block}
+    .bp-cover{display:flex;align-items:center;justify-content:center;width:100%;min-height:340px;background:linear-gradient(135deg,#FFF7ED,#FEF3C7);border-radius:14px;margin-bottom:4px}
+    .bpc-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:32px 24px;text-align:center}
+    .bpc-label{font-size:.72rem;font-weight:700;color:#9CA3AF;letter-spacing:3px;text-transform:uppercase}
+    .bpc-title{font-size:1.7rem;font-weight:900;color:#111827;line-height:1.2}
+    .bpc-subtitle{font-size:1rem;color:#6B7280;font-weight:500}
+    .bpc-brand{font-size:.85rem;font-weight:800;color:#FF6B35;margin-top:8px}
+    .bp-moral-page{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;width:100%;min-height:340px;background:linear-gradient(135deg,#FFFBEB,#FEF9C3);border-radius:14px;padding:28px 20px;text-align:center}
+    .bpm-star{font-size:3rem;line-height:1}
+    .bpm-label{font-size:.72rem;font-weight:700;color:#B45309;letter-spacing:3px;text-transform:uppercase}
+    .bpm-text{font-size:1.15rem;font-weight:800;color:#92400E;line-height:1.6;max-width:280px}
     .bm-nav{display:flex;align-items:center;gap:14px;margin-top:14px}
     .bm-btn{width:44px;height:44px;border-radius:50%;border:none;background:rgba(255,255,255,.13);color:white;font-size:1.05rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .14s}
     .bm-btn:hover:not(:disabled){background:rgba(255,255,255,.26)}
@@ -465,10 +475,8 @@
     </div>
 
     <div class="pg-header">
-      <div class="pg-title" id="pg-title">העמודים</div>
-      <button class="btn-regen" onclick="generate()">↺ צור שוב</button>
+      <button class="btn-regen" onclick="generate()">↺ צור ספר חדש</button>
     </div>
-    <div class="pages-grid" id="pages-grid"></div>
 
     <div class="print-tip">
       <span style="flex-shrink:0">🖨️</span>
@@ -485,10 +493,27 @@
       <button class="bm-close" onclick="closeBook()">✕</button>
     </div>
     <div class="book-page">
-      <img class="bp-img" id="bp-img" src="" alt=""/>
-      <div class="bp-story">
-        <div class="bp-text" id="bp-text"></div>
-        <div class="bp-moral" id="bp-moral"></div>
+      <!-- Cover panel -->
+      <div class="bp-cover" id="bp-cover" style="display:none">
+        <div class="bpc-inner">
+          <div class="bpc-label" id="bpc-label"></div>
+          <div class="bpc-title" id="bpc-title"></div>
+          <div class="bpc-subtitle" id="bpc-subtitle"></div>
+          <div class="bpc-brand">📚 Sefer</div>
+        </div>
+      </div>
+      <!-- Content panel -->
+      <div id="bp-content-panel">
+        <img class="bp-img" id="bp-img" src="" alt=""/>
+        <div class="bp-story">
+          <div class="bp-text" id="bp-text"></div>
+        </div>
+      </div>
+      <!-- Moral panel -->
+      <div class="bp-moral-page" id="bp-moral-page" style="display:none">
+        <div class="bpm-star">⭐</div>
+        <div class="bpm-label">מוסר השכל</div>
+        <div class="bpm-text" id="bpm-text"></div>
       </div>
     </div>
     <div class="bm-nav">
@@ -602,30 +627,28 @@ function showResults() {
   const acts = { coloring: 'דפי צביעה', colored: 'איורים צבעוניים', dotted: 'חיבור נקודות', maze: 'מבוכים' };
   const ages = { young: 'גיל 2–4', mid: 'גיל 5–7', older: 'גיל 8+' };
   document.getElementById('bb-sub').textContent = `${urls.length} ${acts[state.act] || 'עמודים'} · ${ages[state.age]}`;
-  document.getElementById('pg-title').textContent = `${urls.length} ${acts[state.act] || 'עמודים'}`;
-  // Story is always ready now (arrives together with images)
   if (story?.title) {
     document.getElementById('bb-title').textContent = '📚 ' + story.title;
     document.getElementById('bm-title').textContent = story.title;
     setStoryBadge('ready');
   }
-  document.getElementById('pages-grid').innerHTML = urls.map((u, i) => `
-    <div class="page-card" onclick="openBookAt(${i})">
-      <img src="${u}" alt="עמוד ${i+1}" loading="lazy"/>
-      <div class="page-card-foot">
-        <span class="pc-num">עמוד ${i+1}</span>
-        <a href="${u}" download="sefer-${i+1}.png" class="pc-dl" onclick="event.stopPropagation()">⬇️</a>
-      </div>
-    </div>`).join('');
   document.getElementById('results').classList.add('show');
   document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Auto-open the book viewer
+  openBook();
 }
 
 // ── BOOK VIEWER ──
-function openBook() { openBookAt(0); }
-function openBookAt(p) {
+// Page layout: 0=cover, 1..N=content, N+1=moral (if exists)
+function viewerTotal() {
+  return 1 + urls.length + (story?.moral ? 1 : 0);
+}
+
+function openBook() { openBookAt(-1); } // open at cover
+function openBookAt(contentIdx) {
   if (!urls.length) return;
-  bookPage = p; buildDots(); renderPage();
+  bookPage = contentIdx < 0 ? 0 : contentIdx + 1; // cover=0, content=1..N
+  buildDots(); renderPage();
   document.getElementById('book-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -633,31 +656,53 @@ function closeBook() { document.getElementById('book-overlay').classList.remove(
 function overlayClick(e) { if (e.target === e.currentTarget) closeBook(); }
 
 function buildDots() {
-  document.getElementById('bm-dots').innerHTML = urls.map((_,i) =>
+  const total = viewerTotal();
+  document.getElementById('bm-dots').innerHTML = Array.from({length: total}, (_,i) =>
     `<div class="bm-dot${i===bookPage?' active':''}" onclick="jumpTo(${i})"></div>`).join('');
 }
 function jumpTo(n) { bookPage = n; buildDots(); renderPage(); }
 
 function renderPage() {
-  const total = urls.length;
-  document.getElementById('bp-img').src = urls[bookPage];
+  const total = viewerTotal();
+  const hasMoral = !!story?.moral;
+  const isCover  = bookPage === 0;
+  const isMoral  = hasMoral && bookPage === total - 1;
+  const contentIdx = bookPage - 1; // 0-based index into urls[]
+
   document.getElementById('bm-prev').disabled = bookPage >= total - 1;
   document.getElementById('bm-next').disabled = bookPage <= 0;
-  document.getElementById('bm-title').textContent = story?.title || '';
+  document.getElementById('bm-title').textContent = story?.title || 'הספר שלכם';
 
-  const textEl = document.getElementById('bp-text');
-  if (story?.pages?.[bookPage]?.text) textEl.textContent = story.pages[bookPage].text;
-  else if (storyLoading) textEl.innerHTML = '<span style="color:#9CA3AF;font-style:italic">✍️ כותב סיפור...</span>';
-  else textEl.textContent = '';
+  const coverEl   = document.getElementById('bp-cover');
+  const contentEl = document.getElementById('bp-content-panel');
+  const moralEl   = document.getElementById('bp-moral-page');
 
-  const moralEl = document.getElementById('bp-moral');
-  if (bookPage === total - 1 && story?.moral) { moralEl.textContent = '⭐ ' + story.moral; moralEl.classList.add('show'); }
-  else moralEl.classList.remove('show');
+  if (isCover) {
+    coverEl.style.display = 'flex';
+    contentEl.style.display = 'none';
+    moralEl.style.display = 'none';
+    const acts = { coloring: 'ספר צביעה', colored: 'ספר איורים', dotted: 'חיבור נקודות', maze: 'ספר מבוכים' };
+    document.getElementById('bpc-label').textContent = acts[state.act] || 'ספר פעילות';
+    document.getElementById('bpc-title').textContent = story?.title || '';
+    document.getElementById('bpc-subtitle').textContent = story?.subtitle || '';
+  } else if (isMoral) {
+    coverEl.style.display = 'none';
+    contentEl.style.display = 'none';
+    moralEl.style.display = 'flex';
+    document.getElementById('bpm-text').textContent = (story.moral || '').replace(/^מוסר השכל:?\s*/i, '');
+  } else {
+    coverEl.style.display = 'none';
+    contentEl.style.display = 'block';
+    moralEl.style.display = 'none';
+    document.getElementById('bp-img').src = urls[contentIdx];
+    const textEl = document.getElementById('bp-text');
+    textEl.textContent = story?.pages?.[contentIdx]?.text || '';
+  }
 }
 
 function bookNav(d) {
   const n = bookPage + d;
-  if (n < 0 || n >= urls.length) return;
+  if (n < 0 || n >= viewerTotal()) return;
   bookPage = n; buildDots(); renderPage();
 }
 
