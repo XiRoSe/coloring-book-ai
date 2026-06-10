@@ -143,9 +143,15 @@ Return ONLY valid JSON, no markdown, no extra text:
   const styleSuffix = STYLE_SUFFIX[style]?.(age) || STYLE_SUFFIX.coloring(age);
 
   try {
+    // For coloring/dotted/maze: strip color words from character description
+    // to avoid Flux adding colors when it should be B&W line art
+    const characterDesc = (style === 'colored')
+      ? plan.characters
+      : plan.characters.replace(/\b(red|blue|green|yellow|orange|purple|pink|brown|black|white|teal|golden|blonde|brunette|auburn|gray|grey|colorful|vibrant)\b/gi, '').replace(/\s+/g, ' ').trim();
+
     const imageUrls = await Promise.all(
       plan.pages.map(p => {
-        const prompt = `${plan.characters}, ${p.image_prompt}, ${styleSuffix}`;
+        const prompt = `${characterDesc}, ${p.image_prompt}, ${styleSuffix}`;
         return replicate.run('black-forest-labs/flux-1.1-pro', {
           input: { prompt, aspect_ratio: '3:4', output_format: 'png', safety_tolerance: 5 }
         }).then(o => Array.isArray(o) ? o[0] : String(o));

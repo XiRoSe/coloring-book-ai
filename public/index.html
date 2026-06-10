@@ -586,13 +586,22 @@ async function generate() {
   setStep('plan'); setProg(8);
 
   try {
-    // Single call: Claude plans + images generated with consistent character seed
+    // Animate progress while waiting for the server (fake progress)
+    let progVal = 8;
+    const progTimer = setInterval(() => {
+      // Slow ramp: 8→40 during plan phase, then 40→85 during images phase
+      const target = progVal < 35 ? 40 : 85;
+      const step = progVal < 35 ? 1.2 : 0.8;
+      if (progVal < target) { progVal += step; setProg(Math.round(progVal)); }
+      if (progVal >= 35 && progVal < 36) setStep('images');
+    }, 600);
+
     const resp = await fetch('/api/generate-book', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ theme: state.theme, customSubject, style: state.act, age: state.age, count: state.count })
     });
-    setProg(50);
-    setStep('images');
+    clearInterval(progTimer);
+    setProg(95); setStep('done');
     const data = await resp.json();
     if (!resp.ok || !data.pages) throw new Error(data.error || 'שגיאה');
 
