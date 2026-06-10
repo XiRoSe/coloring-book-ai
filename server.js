@@ -9,23 +9,38 @@ import { fileURLToPath } from 'url';
 import { randomUUID } from 'crypto';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DATA_DIR  = path.join(__dirname, 'data');
-const PDFS_DIR  = path.join(DATA_DIR, 'pdfs');
+const DATA_DIR   = path.join(__dirname, 'data');
+const PDFS_DIR   = path.join(DATA_DIR, 'pdfs');
 const BOOKS_FILE = path.join(DATA_DIR, 'books.json');
+const STATS_FILE = path.join(DATA_DIR, 'stats.json');
 
-// Ensure dirs exist and load books DB
+// Ensure dirs exist and load books DB + stats
 await fsp.mkdir(PDFS_DIR, { recursive: true });
 let booksDB = [];
 try { booksDB = JSON.parse(await fsp.readFile(BOOKS_FILE, 'utf8')); } catch {}
+let siteStats = { totalVisits: 0 };
+try { siteStats = JSON.parse(await fsp.readFile(STATS_FILE, 'utf8')); } catch {}
 
 async function saveBooks() {
   await fsp.writeFile(BOOKS_FILE, JSON.stringify(booksDB, null, 2));
+}
+async function saveStats() {
+  await fsp.writeFile(STATS_FILE, JSON.stringify(siteStats));
 }
 
 const app = express();
 app.use(express.json({ limit: '25mb' }));
 app.use(express.static('public'));
 app.use('/data/pdfs', express.static(PDFS_DIR));
+
+// Track page visits
+app.use((req, res, next) => {
+  if (req.method === 'GET' && req.path === '/') {
+    siteStats.totalVisits = (siteStats.totalVisits || 0) + 1;
+    saveStats().catch(() => {});
+  }
+  next();
+});
 
 const replicate = new Replicate({ auth: process.env.REPLICATE_API_TOKEN });
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -54,13 +69,11 @@ const STYLE_SUFFIX = {
     const c = age === 'young' ? 'very simple shapes, bold friendly colors, minimal background' : age === 'mid' ? 'expressive, warm colors, storybook style' : 'richly detailed, vibrant colors, professional illustration';
     return `children's picture book illustration, ${c}, watercolor and gouache style, soft warm lighting, no text, no letters`;
   },
-  dotted: (age) => {
-    const d = age === 'young' ? '15 to 25 large numbered dots' : age === 'mid' ? '30 to 50 numbered dots' : '60 to 100 numbered dots';
-    return `connect the dots activity worksheet, white background, ${d} forming the outline, clear black numbered circles, printable educational worksheet`;
+  dotted: () => {
+    return `connect the dots activity worksheet for young children, white background, exactly 20 large numbered black-outlined circles placed sequentially around the outline of the main character, bold numbers 1 through 20 inside each circle, dots evenly spaced along the character silhouette, clean printable style, no color fill, educational worksheet`;
   },
-  maze: (age) => {
-    const m = age === 'young' ? 'very easy wide paths' : age === 'mid' ? 'medium difficulty' : 'challenging complex';
-    return `${m} maze puzzle for children, white background, black walls, clear start and end markers, printable worksheet`;
+  maze: () => {
+    return `top-down maze puzzle for young children, thick black walls on pure white background, one single clear solvable path from green START marker at top-left to red FINISH marker at bottom-right, wide easy corridors, perfect rectangular grid layout, no decorations, no shading, printable black and white worksheet, geometric precision`;
   }
 };
 
@@ -206,6 +219,11 @@ app.post('/api/save-book', async (req, res) => {
   await saveBooks();
 
   res.json({ id, pdfUrl: book.pdfUrl });
+});
+
+// ── PUBLIC STATS ──
+app.get('/api/stats', (req, res) => {
+  res.json({ totalBooks: booksDB.length, totalVisits: siteStats.totalVisits || 0 });
 });
 
 // ── LIST BOOKS (for admin / analytics) ──

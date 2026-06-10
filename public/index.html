@@ -173,8 +173,10 @@
     .book-modal{display:flex;flex-direction:column;align-items:center;width:min(450px,95vw);max-height:95dvh}
     .bm-topbar{width:100%;display:flex;align-items:center;justify-content:space-between;padding:0 2px 12px}
     .bm-title{color:white;font-size:.95rem;font-weight:800;flex:1}
-    .bm-close{width:34px;height:34px;border-radius:50%;border:none;background:rgba(255,255,255,.12);color:white;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .14s}
+    .bm-close{width:34px;height:34px;border-radius:50%;border:none;background:rgba(255,255,255,.12);color:white;font-size:.95rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .14s;flex-shrink:0}
     .bm-close:hover{background:rgba(255,255,255,.25)}
+    .bm-dl-btn{width:34px;height:34px;border-radius:50%;border:none;background:rgba(255,255,255,.12);color:white;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .14s;flex-shrink:0}
+    .bm-dl-btn:hover{background:rgba(255,107,53,.4)}
     .book-page{width:100%;background:white;border-radius:18px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,.65);max-height:calc(95dvh - 110px);overflow-y:auto}
     .bp-img{width:100%;aspect-ratio:3/4;object-fit:contain;display:block;background:#fafafa}
     .bp-story{padding:16px 20px;direction:rtl;border-top:1px solid #f0f0f0}
@@ -198,6 +200,9 @@
     .bm-dots{display:flex;gap:5px}
     .bm-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.22);cursor:pointer;transition:all .14s}
     .bm-dot.active{background:white;transform:scale(1.3)}
+
+    .stats-bar{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:28px;padding:10px 20px;background:#F9FAFB;border-radius:99px;font-size:.8rem;font-weight:700;color:var(--text2);border:1.5px solid var(--border)}
+    .stats-sep{color:var(--border)}
 
     footer{text-align:center;padding:36px 24px;color:var(--text3);font-size:.76rem;border-top:1px solid var(--border)}
 
@@ -301,12 +306,16 @@
 <!-- How it works -->
 <section class="how">
   <h2 class="sec-title">איך זה עובד?</h2>
-  <p class="sec-sub">ארבעה צעדים לספר שלם</p>
+  <p class="sec-sub">שלושה צעדים לספר שלם</p>
   <div class="how-grid">
-    <div class="how-item"><div class="how-icon hi1">🌍</div><h3>בחרו עולם</h3><p>בחרו את הז'אנר והעולם הסיפורי שיעניין את הילד</p></div>
-    <div class="how-item"><div class="how-icon hi2">🎨</div><h3>בחרו פעילות</h3><p>צביעה, חיבור נקודות או מבוך</p></div>
-    <div class="how-item"><div class="how-icon hi3">✨</div><h3>AI יוצר הכל</h3><p>איורים ייחודיים + סיפור עם עלילה ומוסר השכל</p></div>
-    <div class="how-item"><div class="how-icon hi4">🖨️</div><h3>הורידו PDF</h3><p>ספר מוכן להדפסה על A4 רגיל</p></div>
+    <div class="how-item"><div class="how-icon hi1">🌍</div><h3>בחרו עולם</h3><p>בחרו את הז׳אנר שיעניין את הילד — ג׳ונגל, חלל, ים ועוד</p></div>
+    <div class="how-item"><div class="how-icon hi2">🎨</div><h3>בחרו פעילות</h3><p>צביעה, ספר צבעוני, חיבור נקודות או מבוך</p></div>
+    <div class="how-item"><div class="how-icon hi4">🖨️</div><h3>הורידו PDF</h3><p>ספר מלא עם איורים, סיפור ומוסר השכל — מוכן להדפסה</p></div>
+  </div>
+  <div class="stats-bar" id="stats-bar" style="display:none">
+    <span id="stat-books">📚 0 ספרים נוצרו</span>
+    <span class="stats-sep">·</span>
+    <span id="stat-visits">👁️ 0 ביקורים</span>
   </div>
 </section>
 
@@ -413,25 +422,9 @@
     </div>
   </div>
 
-  <!-- Step 3: Age -->
+  <!-- Step 3: Count -->
   <div class="fg">
-    <div class="step-label"><span class="step-num">3</span> גיל הילד/ה</div>
-    <div class="opt-grid og3b">
-      <button class="opt-card" data-age="young" onclick="pickOpt(this,'age')">
-        <span class="oc-icon">🐣</span><div class="oc-name">קטנטנים</div><div class="oc-desc">2–4 · פשוט מאוד</div>
-      </button>
-      <button class="opt-card active" data-age="mid" onclick="pickOpt(this,'age')">
-        <span class="oc-icon">🌟</span><div class="oc-name">ילדים</div><div class="oc-desc">5–7 · עלילה ורגש</div>
-      </button>
-      <button class="opt-card" data-age="older" onclick="pickOpt(this,'age')">
-        <span class="oc-icon">🏆</span><div class="oc-name">גדולים</div><div class="oc-desc">8+ · מורכב ומעמיק</div>
-      </button>
-    </div>
-  </div>
-
-  <!-- Step 4: Count -->
-  <div class="fg">
-    <div class="step-label"><span class="step-num">4</span> כמה עמודים?</div>
+    <div class="step-label"><span class="step-num">3</span> כמה עמודים?</div>
     <div class="count-row">
       <button class="count-btn active" onclick="setCount(1,this)">1 עמוד</button>
       <button class="count-btn" onclick="setCount(2,this)">2 עמודים</button>
@@ -489,8 +482,9 @@
 <div class="book-overlay" id="book-overlay" onclick="overlayClick(event)">
   <div class="book-modal">
     <div class="bm-topbar">
-      <div class="bm-title" id="bm-title">הספר שלכם</div>
       <button class="bm-close" onclick="closeBook()">✕</button>
+      <div class="bm-title" id="bm-title">הספר שלכם</div>
+      <button class="bm-dl-btn" onclick="closeBook(); downloadPdf()" title="הורד PDF">📄</button>
     </div>
     <div class="book-page">
       <!-- Cover panel -->
@@ -517,9 +511,9 @@
       </div>
     </div>
     <div class="bm-nav">
-      <button class="bm-btn" id="bm-prev" onclick="bookNav(1)">→</button>
+      <button class="bm-btn" id="bm-next" onclick="bookNav(-1)" title="עמוד קודם">→</button>
       <div class="bm-dots" id="bm-dots"></div>
-      <button class="bm-btn" id="bm-next" onclick="bookNav(-1)">←</button>
+      <button class="bm-btn" id="bm-prev" onclick="bookNav(1)" title="עמוד הבא">←</button>
     </div>
   </div>
 </div>
@@ -528,7 +522,7 @@
 
 <script>
 // ── STATE ──
-const state = { theme: 'custom', act: 'coloring', age: 'mid', count: 1 };
+const state = { theme: 'custom', act: 'coloring', age: 'young', count: 1 };
 let urls = [], story = null, storyLoading = false, bookPage = 0;
 
 // ── LOADING STEPS ──
@@ -678,8 +672,9 @@ function renderPage() {
   const isMoral  = hasMoral && bookPage === total - 1;
   const contentIdx = bookPage - 1; // 0-based index into urls[]
 
-  document.getElementById('bm-prev').disabled = bookPage >= total - 1;
-  document.getElementById('bm-next').disabled = bookPage <= 0;
+  // RTL nav: left(←) = next page (higher num), right(→) = prev page (lower num)
+  document.getElementById('bm-prev').disabled = bookPage >= total - 1; // ← next
+  document.getElementById('bm-next').disabled = bookPage <= 0;          // → prev
   document.getElementById('bm-title').textContent = story?.title || 'הספר שלכם';
 
   const coverEl   = document.getElementById('bp-cover');
@@ -717,10 +712,23 @@ function bookNav(d) {
 
 document.addEventListener('keydown', e => {
   if (!document.getElementById('book-overlay').classList.contains('open')) return;
-  if (e.key === 'ArrowLeft') bookNav(-1);
-  if (e.key === 'ArrowRight') bookNav(1);
+  // RTL: ArrowLeft = next page, ArrowRight = prev page
+  if (e.key === 'ArrowLeft') bookNav(1);
+  if (e.key === 'ArrowRight') bookNav(-1);
   if (e.key === 'Escape') closeBook();
 });
+
+// Touch swipe for mobile
+let _tx = null;
+document.getElementById('book-overlay').addEventListener('touchstart', e => { _tx = e.touches[0].clientX; }, { passive: true });
+document.getElementById('book-overlay').addEventListener('touchend', e => {
+  if (_tx === null) return;
+  const dx = e.changedTouches[0].clientX - _tx;
+  _tx = null;
+  if (Math.abs(dx) < 40) return;
+  // RTL: swipe right = next page (like turning Hebrew book page)
+  if (dx > 0) bookNav(1); else bookNav(-1);
+}, { passive: true });
 
 // ── PDF ──
 async function downloadPdf() {
@@ -884,11 +892,21 @@ function trackVisit() {
 
   if (isReturning && d.visits > 1) {
     const badge = document.getElementById('returning-badge');
-    if (badge) {
-      badge.textContent = `👋 ביקור מספר ${d.visits} · ${d.books.length} ספרים נוצרו`;
-      badge.style.display = 'flex';
-    }
+    if (badge) { badge.textContent = `👋 ברוכים השבים!`; badge.style.display = 'flex'; }
   }
+}
+
+async function loadStats() {
+  try {
+    const r = await fetch('/api/stats');
+    const d = await r.json();
+    const bar = document.getElementById('stats-bar');
+    if (bar && (d.totalBooks > 0 || d.totalVisits > 0)) {
+      document.getElementById('stat-books').textContent = `📚 ${d.totalBooks.toLocaleString('he')} ספרים נוצרו`;
+      document.getElementById('stat-visits').textContent = `👁️ ${d.totalVisits.toLocaleString('he')} ביקורים`;
+      bar.style.display = 'flex';
+    }
+  } catch {}
 }
 
 function trackBook(book) {
@@ -900,6 +918,7 @@ function trackBook(book) {
 
 // Run on load
 trackVisit();
+loadStats();
 </script>
 </body>
 </html>
