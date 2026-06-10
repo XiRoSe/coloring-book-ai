@@ -78,7 +78,7 @@
     .th-jungle{--tc:#16A34A;--tcl:#DCFCE7} .th-space{--tc:#6366F1;--tcl:#EEF2FF} .th-ocean{--tc:#0891B2;--tcl:#ECFEFF}
     .th-dragon{--tc:#D97706;--tcl:#FEF3C7} .th-princess{--tc:#DB2777;--tcl:#FCE7F3} .th-dinos{--tc:#059669;--tcl:#D1FAE5}
     .th-garden{--tc:#7C3AED;--tcl:#EDE9FE} .th-pirates{--tc:#B45309;--tcl:#FEF3C7} .th-heroes{--tc:#DC2626;--tcl:#FEE2E2}
-    .th-farm{--tc:#CA8A04;--tcl:#FEF9C3} .th-custom{--tc:#6B7280;--tcl:#F3F4F6}
+    .th-farm{--tc:#CA8A04;--tcl:#FEF9C3} .th-wizard{--tc:#7C3AED;--tcl:#F5F3FF} .th-robots{--tc:#0284C7;--tcl:#E0F2FE} .th-custom{--tc:#6B7280;--tcl:#F3F4F6}
     .theme-card::before{background:var(--tcl)}
     .theme-card.active{background:var(--tcl);border-color:var(--tc)}
     .theme-card.active .tc-tag{color:var(--tc)}
@@ -393,6 +393,18 @@
         <div class="tc-tag">חיות, שדות ושיתוף פעולה</div>
       </button>
 
+      <button class="theme-card th-wizard" data-theme="wizard" onclick="pickTheme(this)">
+        <span class="tc-emoji">🧙</span>
+        <div class="tc-name">בית ספר לקסמים</div>
+        <div class="tc-tag">שרביטים, לחשים ולמידה</div>
+      </button>
+
+      <button class="theme-card th-robots" data-theme="robots" onclick="pickTheme(this)">
+        <span class="tc-emoji">🤖</span>
+        <div class="tc-name">עולם הרובוטים</div>
+        <div class="tc-tag">המצאות, גאדג׳טים וחברות</div>
+      </button>
+
       <button class="theme-card th-custom active" data-theme="custom" onclick="pickTheme(this)">
         <span class="tc-emoji">✏️</span>
         <div class="tc-name">נושא חופשי</div>
@@ -401,7 +413,7 @@
 
     </div>
     <div class="custom-input-wrap show" id="custom-wrap">
-      <input class="custom-input" type="text" id="custom-subject" placeholder="תארו את הסיפור שאתם רוצים — גיבור, עולם, נושא..." maxlength="200"/>
+      <textarea id="custom-subject" rows="3" placeholder="תארו כאן את הנושא שלכם — למשל: ספר על ילד שאוהב לבשל ומגלה מתכון קסום" style="width:100%;padding:12px 16px;border:2px solid var(--border);border-radius:12px;font-size:.88rem;font-family:'Heebo',sans-serif;resize:vertical;direction:rtl;outline:none;transition:border-color .15s;"></textarea>
     </div>
   </div>
 
