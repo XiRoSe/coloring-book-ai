@@ -234,18 +234,11 @@ const STORY_TEMPLATES = {
 };
 
 const STYLE_SUFFIX = {
-  coloring: () => {
-    return `coloring book page for children, MONOCHROME black ink line art on pure white background, thick bold outlines only, absolutely zero color, zero shading, zero gray fills, empty white spaces ready to be colored in, simple cute style, clean printable illustration`;
-  },
+  coloring: () =>
+    `children's coloring book page, MONOCHROME black ink line art on pure white background, thick bold clean outlines only, absolutely zero color, zero shading, zero gray fills, empty white spaces ready to be colored, charming clear illustration style, high contrast printable artwork`,
   colored: (age) => {
-    const c = age === 'young' ? 'very simple shapes, bold friendly colors, minimal background' : age === 'mid' ? 'expressive, warm colors, storybook style' : 'richly detailed, vibrant colors, professional illustration';
-    return `children's picture book illustration, ${c}, watercolor and gouache style, soft warm lighting, no text, no letters`;
-  },
-  dotted: () => {
-    return `connect the dots activity worksheet for young children, white background, exactly 20 large numbered black-outlined circles placed sequentially around the outline of the main character, bold numbers 1 through 20 inside each circle, dots evenly spaced along the character silhouette, clean printable style, no color fill, educational worksheet`;
-  },
-  maze: () => {
-    return `top-down maze puzzle for young children, thick black walls on pure white background, one single clear solvable path from green START marker at top-left to red FINISH marker at bottom-right, wide easy corridors, perfect rectangular grid layout, no decorations, no shading, printable black and white worksheet, geometric precision`;
+    const c = age === 'young' ? 'very simple bold shapes, cheerful colors, uncluttered background' : age === 'mid' ? 'expressive warm colors, storybook illustration style' : 'richly detailed, vibrant saturated colors, professional picture-book art';
+    return `children's picture book illustration, ${c}, watercolor and gouache style, soft directional lighting, no text, no letters, no words`;
   }
 };
 
@@ -263,10 +256,9 @@ function fetchBuffer(url) {
 
 // ── GENERATE FULL BOOK (story plan + consistent images) ──
 app.post('/api/generate-book', async (req, res) => {
-  const { theme = 'custom', customSubject = '', style = 'coloring', age = 'young', count = 1 } = req.body;
-  const themeData = THEMES[theme] || THEMES.custom;
+  const { theme = 'custom', customSubject = '', style = 'coloring', age = 'mid', count = 1 } = req.body;
 
-  if (theme !== 'custom' && !customSubject.trim()) {
+  if (theme !== 'custom') {
     // Use pre-written template
     const template = STORY_TEMPLATES[theme];
     if (!template) return res.status(400).json({ error: 'Template not found' });
@@ -304,14 +296,14 @@ app.post('/api/generate-book', async (req, res) => {
   }
 
   // Custom theme: full AI generation
-  const storyBase = themeData.storyBase || customSubject.trim();
+  const storyBase = customSubject.trim();
   if (!storyBase) return res.status(400).json({ error: 'Subject required' });
   if (count > 6) return res.status(400).json({ error: 'Max 6 pages' });
 
   const pageCount = Math.min(count, 6);
   const ageDesc = { young: 'גיל 2–4: משפטים קצרים מאוד, מילים פשוטות', mid: 'גיל 5–7: שפה נגישה וסיפורית', older: 'גיל 8–12: שפה עשירה, עלילה מורכבת' }[age] || 'גיל 5–7';
   const perPage = { young: '1–2 משפטים קצרים', mid: '2–3 משפטים', older: '3–4 משפטים' }[age];
-  const styleHeb = { coloring: 'דפי צביעה', colored: 'ספר איורים צבעוני', dotted: 'חיבור נקודות', maze: 'מבוכים' }[style] || 'דפים';
+  const styleHeb = { coloring: 'דפי צביעה', colored: 'ספר איורים צבעוני' }[style] || 'דפי צביעה';
 
   // Step 1: Claude generates full book plan — story + per-page image prompts
   let plan;
@@ -335,9 +327,9 @@ STORY RULES (write in Hebrew):
 - Simple, positive moral lesson
 
 IMAGE PROMPT RULES (write in English):
-- "characters" field: a concise visual description of the main character(s) — this will be prepended to every image prompt to ensure visual consistency. Be specific: age, hair, clothing, colors.
-- Each page "image_prompt": describe only the specific scene for that page (action, setting, mood). Do NOT repeat character descriptions here — they come from the "characters" field.
-- Prompts should be visual and concrete, suitable for an AI image generator.
+- "characters": concise visual description of main character(s) — prepended to every prompt for consistency. Describe shape, clothing, proportions. ${style === 'coloring' ? 'Do NOT mention colors (it is a coloring book).' : 'Include colors.'}
+- Each page "image_prompt": describe only the specific scene (action, setting, composition, camera angle, mood). Do NOT repeat character descriptions. Be cinematic and specific.
+- No color words in image_prompts for coloring style.
 
 Return ONLY valid JSON, no markdown, no extra text:
 {
