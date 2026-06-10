@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ציורי — ספרי פעילות לילדים</title>
+  <title>ספרון — ספרי פעילות AI לילדים</title>
   <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -203,9 +203,12 @@
 <header>
   <a class="logo" href="#">
     <div class="logo-mark">🖍️</div>
-    <div><div class="logo-name">ציורי</div><div class="logo-tag">ספרי פעילות לילדים</div></div>
+    <div><div class="logo-name">ספרון</div><div class="logo-tag">ספרי פעילות AI לילדים</div></div>
   </a>
-  <span class="badge">✨ חינמי לגמרי</span>
+  <div style="display:flex;align-items:center;gap:8px">
+    <span class="badge" id="returning-badge" style="display:none;background:#8B5CF6;font-size:.68rem"></span>
+    <span class="badge">✨ חינמי לגמרי</span>
+  </div>
 </header>
 
 <!-- Hero -->
@@ -430,7 +433,7 @@
   </div>
 </div>
 
-<footer>🖍️ ציורי — ספרי פעילות חינמיים לילדים &nbsp;·&nbsp; נוצר עם ❤️ ובינה מלאכותית</footer>
+<footer>🖍️ <b>ספרון</b> — ספרי פעילות AI חינמיים לילדים &nbsp;·&nbsp; נוצר עם ❤️ ובינה מלאכותית</footer>
 
 <script>
 // ── STATE ──
@@ -618,16 +621,6 @@ async function downloadPdf() {
     frame.style.cssText = `position:fixed;left:-9999px;top:0;width:${W}px;overflow:hidden;background:white;font-family:Heebo,Arial,sans-serif;`;
     document.body.appendChild(frame);
 
-    // Cover
-    frame.innerHTML = `<div style="width:${W}px;height:${H}px;background:linear-gradient(160deg,#FF6B35,#c44a1f);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 80px;">
-      <div style="font-size:110px;margin-bottom:20px;">${themeEmoji}</div>
-      <div style="font-size:54px;font-weight:900;color:white;text-align:center;direction:rtl;line-height:1.15;margin-bottom:12px;">${s?.title || ''}</div>
-      ${s?.subtitle ? `<div style="font-size:24px;color:rgba(255,255,255,.78);text-align:center;direction:rtl;margin-bottom:20px;">${s.subtitle}</div>` : ''}
-      <div style="margin-top:36px;font-size:17px;color:rgba(255,255,255,.6);direction:rtl;">ספר פעילות · ${total} עמודים</div>
-    </div>`;
-    const c0 = await html2canvas(frame.firstElementChild, { scale: 1, backgroundColor: '#FF6B35', width: W, height: H });
-    doc.addImage(c0.toDataURL('image/jpeg', .92), 'JPEG', 0, 0, 595, 842);
-
     for (let i = 0; i < total; i++) {
       btn.textContent = `⏳ עמוד ${i+1}/${total}...`;
       const text = s?.pages?.[i]?.text || '';
@@ -645,7 +638,7 @@ async function downloadPdf() {
         <img src="${src}" style="width:100%;height:560px;object-fit:contain;display:block;border-radius:14px;background:#FAFAFA;"/>
         ${text ? `<p style="font-size:22px;line-height:1.9;color:#111827;margin-top:22px;text-align:right;font-weight:500;">${text}</p>` : ''}
         ${isLast && s?.moral ? `<div style="background:#FFFBEB;border:2px solid #FDE68A;border-radius:12px;padding:16px 20px;margin-top:16px;font-size:20px;font-weight:800;color:#92400E;direction:rtl;">⭐ ${s.moral}</div>` : ''}
-        <div style="position:absolute;bottom:22px;left:0;right:0;text-align:center;font-size:13px;color:#D1D5DB;direction:ltr;">ציורי · tziyuri.app</div>
+        <div style="position:absolute;bottom:22px;left:0;right:0;text-align:center;font-size:13px;color:#D1D5DB;direction:ltr;">🖍️ ספרון · siparon.app</div>
       </div>`;
 
       await new Promise(res => {
@@ -655,13 +648,32 @@ async function downloadPdf() {
       });
 
       const canvas = await html2canvas(frame.firstElementChild, { scale: 1, useCORS: true, allowTaint: false, backgroundColor: '#ffffff', width: W, height: H });
-      doc.addPage();
+      if (i > 0) doc.addPage();
       doc.addImage(canvas.toDataURL('image/jpeg', .92), 'JPEG', 0, 0, 595, 842);
     }
 
     document.body.removeChild(frame);
     const fname = (s?.title || 'tziyuri').replace(/[^\u05D0-\u05EAa-zA-Z0-9 ]/g,'').trim().replace(/ +/g,'-');
     doc.save(fname + '.pdf');
+
+    // Save to server + localStorage
+    try {
+      const pdfBase64 = doc.output('datauristring').split(',')[1];
+      btn.textContent = '💾 שומר...';
+      const saveResp = await fetch('/api/save-book', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: s?.title, subtitle: s?.subtitle,
+          theme: state.theme, age: state.age, style: state.act,
+          pageCount: total, pdfBase64, userId: getUserId()
+        })
+      });
+      if (saveResp.ok) {
+        const saved = await saveResp.json();
+        trackBook({ title: s?.title, theme: state.theme, pdfUrl: saved.pdfUrl, createdAt: new Date().toISOString() });
+      }
+    } catch (saveErr) { console.warn('Save failed:', saveErr.message); }
+
   } catch (e) {
     console.error(e); alert('שגיאה ביצירת PDF: ' + e.message);
   } finally {
@@ -680,6 +692,52 @@ function setStep(s) {
 }
 function setProg(p) { document.getElementById('prog-bar').style.width = p + '%'; }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+// ── LOCAL STORAGE / USER TRACKING ──
+const LS_KEY = 'tziyuri_user';
+
+function getUserData() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; } catch { return {}; }
+}
+function saveUserData(data) {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(data)); } catch {}
+}
+
+function getUserId() {
+  let d = getUserData();
+  if (!d.userId) { d.userId = 'u_' + Math.random().toString(36).slice(2,10) + Date.now().toString(36); saveUserData(d); }
+  return d.userId;
+}
+
+function trackVisit() {
+  let d = getUserData();
+  const now = new Date().toISOString();
+  const isReturning = !!d.firstVisit;
+  d.userId     = d.userId || getUserId();
+  d.firstVisit = d.firstVisit || now;
+  d.lastVisit  = now;
+  d.visits     = (d.visits || 0) + 1;
+  d.books      = d.books || [];
+  saveUserData(d);
+
+  if (isReturning && d.visits > 1) {
+    const badge = document.getElementById('returning-badge');
+    if (badge) {
+      badge.textContent = `👋 ביקור מספר ${d.visits} · ${d.books.length} ספרים נוצרו`;
+      badge.style.display = 'flex';
+    }
+  }
+}
+
+function trackBook(book) {
+  let d = getUserData();
+  d.books = d.books || [];
+  d.books.push(book);
+  saveUserData(d);
+}
+
+// Run on load
+trackVisit();
 </script>
 </body>
 </html>

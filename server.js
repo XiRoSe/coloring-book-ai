@@ -3,10 +3,29 @@ import Replicate from 'replicate';
 import Anthropic from '@anthropic-ai/sdk';
 import https from 'https';
 import http from 'http';
+import { promises as fsp } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { randomUUID } from 'crypto';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const DATA_DIR  = path.join(__dirname, 'data');
+const PDFS_DIR  = path.join(DATA_DIR, 'pdfs');
+const BOOKS_FILE = path.join(DATA_DIR, 'books.json');
+
+// Ensure dirs exist and load books DB
+await fsp.mkdir(PDFS_DIR, { recursive: true });
+let booksDB = [];
+try { booksDB = JSON.parse(await fsp.readFile(BOOKS_FILE, 'utf8')); } catch {}
+
+async function saveBooks() {
+  await fsp.writeFile(BOOKS_FILE, JSON.stringify(booksDB, null, 2));
+}
 
 const app = express();
-app.use(express.json({ limit: '2mb' }));
+app.use(express.json({ limit: '25mb' }));
 app.use(express.static('public'));
+app.use('/data/pdfs', express.static(PDFS_DIR));
 
 const replicate = new Replicate({ auth: process.env.REPLICATE_API_TOKEN });
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
@@ -136,6 +155,52 @@ app.get('/api/proxy-image', async (req, res) => {
     res.setHeader('Cache-Control', 'public, max-age=3600');
     res.send(buf);
   } catch { res.status(500).send('fetch failed'); }
+});
+
+// ── SAVE BOOK (called after client generates PDF) ──
+app.post('/api/save-book', async (req, res) => {
+  const { title, subtitle, theme, age, style, pageCount, pdfBase64, userId } = req.body;
+  if (!pdfBase64) return res.status(400).json({ error: 'pdfBase64 required' });
+
+  const id = randomUUID();
+  const filename = `${id}.pdf`;
+  const pdfPath = path.join(PDFS_DIR, filename);
+
+  await fsp.writeFile(pdfPath, Buffer.from(pdfBase64, 'base64'));
+
+  const book = {
+    id,
+    title:     title || 'ספר ללא שם',
+    subtitle:  subtitle || '',
+    theme,
+    age,
+    style,
+    pageCount: pageCount || 0,
+    userId:    userId || 'anonymous',
+    createdAt: new Date().toISOString(),
+    pdfUrl:    `/data/pdfs/${filename}`
+  };
+
+  booksDB.push(book);
+  await saveBooks();
+
+  res.json({ id, pdfUrl: book.pdfUrl });
+});
+
+// ── LIST BOOKS (for admin / analytics) ──
+app.get('/api/books', (req, res) => {
+  const stats = {
+    total: booksDB.length,
+    uniqueUsers: new Set(booksDB.map(b => b.userId)).size,
+    returningUsers: (() => {
+      const counts = {};
+      booksDB.forEach(b => { counts[b.userId] = (counts[b.userId] || 0) + 1; });
+      return Object.values(counts).filter(c => c > 1).length;
+    })(),
+    byTheme: booksDB.reduce((acc, b) => { acc[b.theme] = (acc[b.theme]||0)+1; return acc; }, {}),
+    books: booksDB.map(b => ({ id: b.id, title: b.title, theme: b.theme, age: b.age, createdAt: b.createdAt, pdfUrl: b.pdfUrl }))
+  };
+  res.json(stats);
 });
 
 const PORT = process.env.PORT || 3000;
