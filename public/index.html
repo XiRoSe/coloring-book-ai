@@ -3,561 +3,565 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ציורי 🎨 — דפי פעילות לילדים</title>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <title>ציורי — ספרי פעילות לילדים עם סיפור</title>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --yellow: #FFD93D;
       --orange: #FF6B35;
-      --coral: #FF6B6B;
+      --orange-light: #FFF0E8;
+      --orange-dark: #E85A26;
+      --yellow: #FFD93D;
       --teal: #4ECDC4;
-      --purple: #A855F7;
-      --blue: #3B82F6;
-      --green: #22C55E;
-      --bg: #FFFBF0;
-      --card: #FFFFFF;
-      --text: #1E1E2E;
-      --sub: #6B7280;
+      --purple: #8B5CF6;
+      --green: #10B981;
+      --bg: #FFFDF7;
+      --surface: #FFFFFF;
+      --text: #111827;
+      --text-2: #4B5563;
+      --text-3: #9CA3AF;
       --border: #E5E7EB;
-      --shadow: 0 4px 24px rgba(0,0,0,0.08);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow: 0 4px 16px rgba(0,0,0,0.08);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
+      --radius: 20px;
     }
-
     html { scroll-behavior: smooth; }
-    body {
-      font-family: 'Heebo', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-    }
+    body { font-family: 'Heebo', sans-serif; background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
 
-    /* ===== HEADER ===== */
+    /* ── HEADER ── */
     header {
-      background: white;
-      border-bottom: 3px solid var(--yellow);
-      padding: 0 24px;
-      height: 68px;
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(255,253,247,0.92); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px; height: 64px;
       display: flex; align-items: center; justify-content: space-between;
-      position: sticky; top: 0; z-index: 100;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     }
-    .brand {
-      display: flex; align-items: center; gap: 10px;
-    }
-    .brand-icon {
-      width: 44px; height: 44px; border-radius: 14px;
-      background: linear-gradient(135deg, var(--yellow), var(--orange));
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-mark {
+      width: 40px; height: 40px; border-radius: 12px;
+      background: linear-gradient(135deg, #FFD93D 0%, #FF6B35 100%);
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.4rem;
-      box-shadow: 0 3px 10px rgba(255,107,53,0.3);
+      font-size: 1.3rem; box-shadow: 0 3px 10px rgba(255,107,53,0.3);
     }
-    .brand-name { font-size: 1.5rem; font-weight: 900; color: var(--text); letter-spacing: -0.5px; }
-    .brand-tag { font-size: 0.72rem; color: var(--sub); font-weight: 600; margin-top: -2px; }
-    .header-badge {
+    .logo-text { font-size: 1.4rem; font-weight: 900; color: var(--text); letter-spacing: -0.5px; }
+    .logo-sub { font-size: 0.68rem; color: var(--text-3); font-weight: 600; letter-spacing: 0.04em; }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .badge-free {
       background: var(--green); color: white;
-      font-size: 0.72rem; font-weight: 700; padding: 5px 12px;
-      border-radius: 99px; letter-spacing: 0.04em;
+      font-size: 0.7rem; font-weight: 800; padding: 4px 10px;
+      border-radius: 99px; letter-spacing: 0.05em;
     }
 
-    /* ===== HERO ===== */
+    /* ── HERO ── */
     .hero {
-      text-align: center; padding: 56px 24px 40px;
-      background: linear-gradient(180deg, #FFFBF0 0%, #FFF9E6 100%);
-      position: relative; overflow: hidden;
+      padding: 72px 24px 60px;
+      text-align: center; position: relative; overflow: hidden;
+      background: linear-gradient(160deg, #FFFDF7 0%, #FFF5EC 50%, #FFFDF7 100%);
     }
-    .hero-deco {
-      position: absolute; font-size: 5rem; opacity: 0.06;
-      pointer-events: none; user-select: none;
+    .hero-blob {
+      position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.5; pointer-events: none;
     }
-    .deco-1 { top: 10px; right: 5%; transform: rotate(15deg); }
-    .deco-2 { top: 20px; left: 5%; transform: rotate(-10deg); }
-    .deco-3 { bottom: 0px; right: 10%; transform: rotate(25deg); }
-    .hero-emoji { font-size: 3.5rem; display: block; margin-bottom: 14px;
-      animation: wiggle 3s ease-in-out infinite; }
-    @keyframes wiggle {
-      0%,100% { transform: rotate(0deg); }
-      25% { transform: rotate(-8deg); }
-      75% { transform: rotate(8deg); }
+    .blob-1 { width: 400px; height: 400px; background: #FFD93D; top: -100px; right: -100px; }
+    .blob-2 { width: 300px; height: 300px; background: #4ECDC4; bottom: -80px; left: -80px; }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--orange-light); color: var(--orange);
+      font-size: 0.8rem; font-weight: 700; padding: 5px 14px;
+      border-radius: 99px; margin-bottom: 20px;
+      border: 1.5px solid rgba(255,107,53,0.2);
     }
     .hero h1 {
-      font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 900;
-      color: var(--text); letter-spacing: -1px; margin-bottom: 12px;
+      font-size: clamp(2rem, 5vw, 3.4rem); font-weight: 900;
+      color: var(--text); line-height: 1.15; letter-spacing: -1.5px;
+      margin-bottom: 20px; position: relative;
     }
-    .hero h1 .highlight { color: var(--orange); }
-    .hero p { font-size: 1rem; color: var(--sub); max-width: 420px; margin: 0 auto; line-height: 1.7; }
-
-    /* ===== MAIN ===== */
-    main { max-width: 780px; margin: 0 auto; padding: 32px 20px 80px; }
-
-    /* ===== STEP CARD ===== */
-    .step-card {
-      background: white; border-radius: 24px;
-      border: 2px solid var(--border);
-      padding: 28px; margin-bottom: 20px;
-      box-shadow: var(--shadow);
+    .hero h1 em { color: var(--orange); font-style: normal; }
+    .hero-sub {
+      font-size: clamp(0.95rem, 2vw, 1.15rem); color: var(--text-2);
+      max-width: 520px; margin: 0 auto 36px; line-height: 1.7; font-weight: 500;
     }
-    .step-header {
-      display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
-    }
-    .step-num {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: linear-gradient(135deg, var(--yellow), var(--orange));
-      display: flex; align-items: center; justify-content: center;
-      font-size: 0.9rem; font-weight: 900; color: white; flex-shrink: 0;
-    }
-    .step-title { font-size: 1rem; font-weight: 800; color: var(--text); }
-    .step-sub { font-size: 0.78rem; color: var(--sub); margin-top: 1px; }
-
-    /* ===== ACTIVITY TYPE ===== */
-    .activity-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
-    }
-    .act-btn {
-      padding: 18px 10px; border-radius: 16px;
-      border: 2.5px solid var(--border); background: white;
-      cursor: pointer; text-align: center; transition: all 0.18s;
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+      color: white; font-size: 1.05rem; font-weight: 800;
+      padding: 16px 36px; border-radius: 99px; border: none; cursor: pointer;
       font-family: 'Heebo', sans-serif;
+      box-shadow: 0 8px 28px rgba(255,107,53,0.4);
+      transition: all 0.2s; text-decoration: none;
     }
-    .act-btn:hover { transform: translateY(-2px); }
-    .act-btn.active { border-color: var(--orange); background: #FFF3E6;
-      box-shadow: 0 4px 16px rgba(255,107,53,0.2); }
-    .act-icon { font-size: 2.2rem; display: block; margin-bottom: 8px; }
-    .act-name { font-size: 0.88rem; font-weight: 800; color: var(--text); }
-    .act-desc { font-size: 0.7rem; color: var(--sub); margin-top: 3px; line-height: 1.4; }
+    .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(255,107,53,0.5); }
+    .hero-stats {
+      display: flex; gap: 32px; justify-content: center; margin-top: 40px;
+      flex-wrap: wrap;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat-num { font-size: 1.5rem; font-weight: 900; color: var(--text); }
+    .hero-stat-label { font-size: 0.75rem; color: var(--text-3); font-weight: 600; margin-top: 2px; }
+    .hero-preview {
+      display: flex; gap: 12px; justify-content: center; margin-top: 48px;
+      position: relative; z-index: 1;
+    }
+    .preview-card {
+      width: 120px; background: white; border-radius: 14px;
+      padding: 10px; box-shadow: var(--shadow-lg);
+      border: 1.5px solid rgba(0,0,0,0.06); transform: rotate(-3deg);
+      transition: transform 0.3s;
+    }
+    .preview-card:nth-child(2) { transform: rotate(0deg) translateY(-8px); }
+    .preview-card:nth-child(3) { transform: rotate(3deg); }
+    .preview-card:hover { transform: scale(1.05) rotate(0deg); }
+    .preview-card-img { width: 100%; aspect-ratio: 3/4; background: linear-gradient(135deg, #f3f4f6, #e5e7eb); border-radius: 8px; margin-bottom: 6px; display: flex; align-items: center; justify-content: center; font-size: 2rem; }
+    .preview-card-label { font-size: 0.65rem; font-weight: 700; color: var(--text-3); text-align: center; }
 
-    /* ===== THEME QUICK PICKS ===== */
-    .themes-row {
-      display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
+    /* ── HOW IT WORKS ── */
+    .how-section {
+      padding: 64px 24px; background: white;
+      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
     }
-    .theme-chip {
-      padding: 8px 16px; border-radius: 99px; border: 2px solid var(--border);
-      background: white; font-size: 0.82rem; font-weight: 700;
-      color: var(--sub); cursor: pointer; transition: all 0.15s;
-      font-family: 'Heebo', sans-serif;
-    }
-    .theme-chip:hover { border-color: var(--teal); color: #0f766e; background: #f0fafa; }
-    .theme-chip.active { border-color: var(--teal); background: #f0fafa; color: #0f766e; }
+    .section-title { font-size: 1.7rem; font-weight: 900; color: var(--text); text-align: center; margin-bottom: 8px; letter-spacing: -0.5px; }
+    .section-sub { font-size: 0.92rem; color: var(--text-2); text-align: center; margin-bottom: 40px; }
+    .how-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; max-width: 800px; margin: 0 auto; }
+    .how-step { text-align: center; }
+    .how-icon { width: 64px; height: 64px; border-radius: 20px; margin: 0 auto 14px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
+    .how-step:nth-child(1) .how-icon { background: #FFF0E8; }
+    .how-step:nth-child(2) .how-icon { background: #E0F7F6; }
+    .how-step:nth-child(3) .how-icon { background: #F3F0FF; }
+    .how-step:nth-child(4) .how-icon { background: #ECFDF5; }
+    .how-step h3 { font-size: 0.92rem; font-weight: 800; color: var(--text); margin-bottom: 5px; }
+    .how-step p { font-size: 0.8rem; color: var(--text-2); line-height: 1.6; }
 
-    /* ===== TEXT INPUT ===== */
-    .input-group { position: relative; }
-    .input-group input {
-      width: 100%; padding: 15px 18px; border-radius: 14px;
-      border: 2px solid var(--border); font-family: 'Heebo', sans-serif;
-      font-size: 0.95rem; color: var(--text); background: #F9FAFB;
-      direction: rtl; transition: border-color 0.15s, background 0.15s;
-    }
-    .input-group input:focus {
-      outline: none; border-color: var(--orange); background: white;
-    }
-    .input-group input::placeholder { color: #9CA3AF; }
-    .input-hint { font-size: 0.72rem; color: var(--sub); margin-top: 6px; }
+    /* ── CREATOR ── */
+    #creator { padding: 64px 24px 80px; max-width: 760px; margin: 0 auto; }
+    .creator-title { font-size: 1.8rem; font-weight: 900; color: var(--text); margin-bottom: 6px; letter-spacing: -0.5px; }
+    .creator-sub { font-size: 0.9rem; color: var(--text-2); margin-bottom: 36px; }
 
-    /* ===== AGE ===== */
-    .age-row { display: flex; gap: 10px; }
-    .age-btn {
-      flex: 1; padding: 12px 8px; border-radius: 12px;
+    /* ── FORM GROUPS ── */
+    .form-group { margin-bottom: 28px; }
+    .form-label { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; font-weight: 800; color: var(--text); margin-bottom: 12px; }
+    .form-label-num {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--orange); color: white;
+      font-size: 0.75rem; font-weight: 900;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+
+    .subject-input {
+      width: 100%; padding: 16px 20px; border-radius: 14px;
       border: 2px solid var(--border); background: white;
-      cursor: pointer; font-family: 'Heebo', sans-serif;
-      text-align: center; transition: all 0.15s;
+      font-family: 'Heebo', sans-serif; font-size: 1rem; color: var(--text);
+      transition: border-color 0.15s, box-shadow 0.15s; direction: rtl;
     }
-    .age-btn:hover { border-color: var(--purple); }
-    .age-btn.active { border-color: var(--purple); background: #F5F3FF; }
-    .age-emoji { font-size: 1.5rem; display: block; margin-bottom: 5px; }
-    .age-label { font-size: 0.8rem; font-weight: 800; color: var(--text); }
-    .age-range { font-size: 0.68rem; color: var(--sub); }
+    .subject-input:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(255,107,53,0.1); }
+    .subject-input::placeholder { color: var(--text-3); }
 
-    /* ===== COUNT ===== */
-    .count-pills { display: flex; gap: 8px; }
-    .count-pill {
-      padding: 9px 22px; border-radius: 99px; border: 2px solid var(--border);
-      background: white; font-family: 'Heebo', sans-serif;
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .chip {
+      padding: 7px 16px; border-radius: 99px;
+      border: 1.5px solid var(--border); background: white;
+      font-size: 0.82rem; font-weight: 600; color: var(--text-2);
+      cursor: pointer; transition: all 0.14s; font-family: 'Heebo', sans-serif;
+    }
+    .chip:hover { border-color: var(--orange); color: var(--orange); background: var(--orange-light); }
+    .chip.active { border-color: var(--orange); color: var(--orange); background: var(--orange-light); font-weight: 700; }
+
+    .option-grid { display: grid; gap: 10px; }
+    .option-grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .option-grid-2 { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+    .option-card {
+      padding: 16px 12px; border-radius: 16px;
+      border: 2px solid var(--border); background: white;
+      cursor: pointer; text-align: center; transition: all 0.15s;
+      font-family: 'Heebo', sans-serif;
+    }
+    .option-card:hover { border-color: #d1d5db; transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+    .option-card.active { border-color: var(--orange); background: var(--orange-light); box-shadow: 0 4px 16px rgba(255,107,53,0.15); }
+    .option-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
+    .option-name { font-size: 0.85rem; font-weight: 800; color: var(--text); }
+    .option-desc { font-size: 0.7rem; color: var(--text-3); margin-top: 3px; line-height: 1.4; }
+    .option-card.active .option-desc { color: var(--orange-dark); opacity: 0.8; }
+
+    .count-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .count-btn {
+      padding: 10px 24px; border-radius: 99px;
+      border: 2px solid var(--border); background: white;
       font-size: 0.85rem; font-weight: 700; cursor: pointer;
-      transition: all 0.15s; color: var(--sub);
+      color: var(--text-2); font-family: 'Heebo', sans-serif; transition: all 0.14s;
     }
-    .count-pill:hover { border-color: var(--blue); color: var(--blue); }
-    .count-pill.active { border-color: var(--blue); background: #EFF6FF; color: var(--blue); }
+    .count-btn:hover { border-color: #9CA3AF; color: var(--text); }
+    .count-btn.active { border-color: var(--orange); background: var(--orange-light); color: var(--orange); }
 
-    /* ===== GENERATE BUTTON ===== */
+    .divider { height: 1px; background: var(--border); margin: 28px 0; }
+
     .btn-generate {
-      width: 100%; padding: 18px; border-radius: 16px; border: none;
-      background: linear-gradient(135deg, var(--orange), var(--coral));
+      width: 100%; padding: 20px; border-radius: 16px; border: none;
+      background: linear-gradient(135deg, var(--orange) 0%, #E85A26 100%);
       color: white; font-family: 'Heebo', sans-serif;
-      font-size: 1.05rem; font-weight: 900; cursor: pointer; letter-spacing: 0.02em;
-      box-shadow: 0 6px 24px rgba(255,107,53,0.4);
-      transition: all 0.2s; display: flex; align-items: center;
-      justify-content: center; gap: 10px;
+      font-size: 1.1rem; font-weight: 900; cursor: pointer;
+      box-shadow: 0 8px 24px rgba(255,107,53,0.4);
+      transition: all 0.2s; letter-spacing: 0.02em;
+      display: flex; align-items: center; justify-content: center; gap: 12px;
     }
-    .btn-generate:hover:not(:disabled) {
-      transform: translateY(-2px); box-shadow: 0 10px 32px rgba(255,107,53,0.5);
-    }
-    .btn-generate:active:not(:disabled) { transform: translateY(0); }
-    .btn-generate:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+    .btn-generate:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(255,107,53,0.5); }
+    .btn-generate:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
 
-    /* ===== PROGRESS ===== */
-    .progress-section {
-      display: none; background: white; border-radius: 24px;
-      border: 2px solid var(--border); padding: 40px 24px;
-      text-align: center; margin-bottom: 20px; box-shadow: var(--shadow);
+    /* ── LOADING ── */
+    .loading-section {
+      display: none; padding: 60px 24px; text-align: center;
+      border-radius: var(--radius); background: white;
+      border: 1.5px solid var(--border); box-shadow: var(--shadow); margin-top: 24px;
     }
-    .progress-section.show { display: block; }
-    .crayon-anim {
-      font-size: 3.5rem; display: inline-block;
-      animation: draw 0.6s ease-in-out infinite alternate;
+    .loading-section.show { display: block; }
+    .loading-crayon { font-size: 4rem; display: inline-block; animation: crayonDraw 0.5s ease-in-out infinite alternate; }
+    @keyframes crayonDraw {
+      from { transform: rotate(-12deg) translateX(-5px); }
+      to   { transform: rotate(12deg) translateX(5px); }
     }
-    @keyframes draw {
-      from { transform: rotate(-15deg) translateX(-4px); }
-      to   { transform: rotate(15deg) translateX(4px); }
+    .loading-title { font-size: 1.2rem; font-weight: 900; color: var(--text); margin: 20px 0 6px; }
+    .loading-sub { font-size: 0.85rem; color: var(--text-2); }
+    .loading-steps { display: flex; gap: 8px; justify-content: center; margin-top: 24px; flex-wrap: wrap; }
+    .loading-step {
+      padding: 6px 14px; border-radius: 99px; font-size: 0.75rem; font-weight: 700;
+      background: #F3F4F6; color: var(--text-3); transition: all 0.4s;
     }
-    .progress-title { font-size: 1.1rem; font-weight: 800; color: var(--text); margin: 16px 0 4px; }
-    .progress-sub { font-size: 0.82rem; color: var(--sub); }
-    .progress-track { background: #F3F4F6; border-radius: 99px; height: 10px; max-width: 280px; margin: 20px auto 0; }
-    .progress-fill { height: 100%; border-radius: 99px; width: 0%; transition: width 0.5s;
-      background: linear-gradient(90deg, var(--yellow), var(--orange)); }
+    .loading-step.done { background: #ECFDF5; color: #059669; }
+    .loading-step.active { background: var(--orange-light); color: var(--orange); }
+    .progress-track { background: #F3F4F6; border-radius: 99px; height: 8px; max-width: 320px; margin: 20px auto 0; overflow: hidden; }
+    .progress-bar { height: 100%; background: linear-gradient(90deg, var(--yellow), var(--orange)); border-radius: 99px; width: 0; transition: width 0.6s ease; }
 
-    /* ===== RESULTS ===== */
-    .results-section { display: none; }
+    /* ── RESULTS ── */
+    .results-section { display: none; margin-top: 24px; }
     .results-section.show { display: block; }
-    .results-header {
+
+    .book-banner {
+      background: linear-gradient(135deg, #1E1E2E 0%, #2d2d44 100%);
+      border-radius: var(--radius); padding: 28px 32px;
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+      gap: 20px; flex-wrap: wrap; margin-bottom: 20px; box-shadow: var(--shadow-lg);
     }
-    .results-title { font-size: 1.1rem; font-weight: 900; color: var(--text); }
-    .btn-download-all {
-      padding: 10px 20px; border-radius: 99px; border: none;
-      background: var(--text); color: white; font-family: 'Heebo', sans-serif;
-      font-size: 0.82rem; font-weight: 700; cursor: pointer;
-      display: flex; align-items: center; gap: 6px;
-      transition: background 0.15s;
+    .book-banner-left { flex: 1; min-width: 200px; }
+    .book-banner-title { font-size: 1.3rem; font-weight: 900; color: white; margin-bottom: 4px; }
+    .book-banner-sub { font-size: 0.83rem; color: rgba(255,255,255,0.55); }
+    .story-status-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.75rem; font-weight: 700; margin-top: 10px;
+      padding: 4px 12px; border-radius: 99px;
     }
-    .btn-download-all:hover { background: #374151; }
+    .story-loading-badge { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); }
+    .story-ready-badge { background: rgba(16,185,129,0.2); color: #6EE7B7; }
+    .book-banner-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .btn-book {
+      padding: 12px 20px; border-radius: 12px; border: none;
+      font-family: 'Heebo', sans-serif; font-size: 0.88rem; font-weight: 800;
+      cursor: pointer; display: flex; align-items: center; gap: 8px;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-book-primary { background: var(--orange); color: white; box-shadow: 0 4px 16px rgba(255,107,53,0.35); }
+    .btn-book-primary:hover { background: var(--orange-dark); transform: translateY(-1px); }
+    .btn-book-secondary { background: rgba(255,255,255,0.12); color: white; border: 1.5px solid rgba(255,255,255,0.2); }
+    .btn-book-secondary:hover { background: rgba(255,255,255,0.22); }
+    .btn-book:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 
-    .pages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+    .pages-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .pages-header-title { font-size: 0.9rem; font-weight: 800; color: var(--text); }
+    .btn-regen { padding: 8px 16px; border-radius: 99px; border: 1.5px solid var(--border); background: white; font-size: 0.78rem; font-weight: 700; color: var(--text-2); cursor: pointer; font-family: 'Heebo', sans-serif; transition: all 0.12s; }
+    .btn-regen:hover { border-color: var(--orange); color: var(--orange); }
 
+    .pages-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
     .page-card {
-      background: white; border-radius: 18px;
-      border: 2px solid var(--border); overflow: hidden;
-      box-shadow: var(--shadow); transition: transform 0.2s, box-shadow 0.2s;
+      background: white; border-radius: 16px; border: 1.5px solid var(--border);
+      overflow: hidden; box-shadow: var(--shadow-sm); transition: all 0.2s; cursor: pointer;
     }
-    .page-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.12); }
-    .page-card img { width: 100%; display: block; aspect-ratio: 3/4; object-fit: cover; }
+    .page-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: var(--orange); }
+    .page-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; display: block; }
+    .page-card-footer { padding: 8px 10px; display: flex; align-items: center; justify-content: space-between; }
+    .page-card-num { font-size: 0.72rem; font-weight: 700; color: var(--text-3); }
+    .page-card-dl { font-size: 0.72rem; color: var(--orange); font-weight: 700; text-decoration: none; }
 
-    .page-card-footer {
-      padding: 10px 12px; display: flex;
-      align-items: center; justify-content: space-between;
-      border-top: 1px solid var(--border);
-    }
-    .page-label { font-size: 0.75rem; font-weight: 700; color: var(--sub); }
-    .btn-dl {
-      padding: 5px 14px; border-radius: 99px; border: 1.5px solid var(--border);
-      background: white; font-family: 'Heebo', sans-serif;
-      font-size: 0.72rem; font-weight: 700; cursor: pointer;
-      color: var(--sub); transition: all 0.12s; text-decoration: none;
-    }
-    .btn-dl:hover { border-color: var(--orange); color: var(--orange); }
-
-    .page-loading {
-      aspect-ratio: 3/4; background: linear-gradient(135deg, #F9FAFB, #F3F4F6);
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 10px;
-    }
-    .page-loading-icon { font-size: 2.5rem; animation: bounce 1s ease-in-out infinite; }
-    @keyframes bounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-    .page-loading-text { font-size: 0.75rem; color: var(--sub); font-weight: 600; }
-
-    /* ===== PRINT TIP ===== */
     .print-tip {
-      background: #FFFBEB; border: 1.5px solid var(--yellow);
-      border-radius: 14px; padding: 14px 18px;
-      display: flex; gap: 10px; align-items: flex-start; margin-top: 16px;
+      background: #FFFBEB; border: 1.5px solid #FDE68A; border-radius: 12px;
+      padding: 12px 16px; display: flex; gap: 10px; align-items: flex-start; margin-top: 16px;
     }
-    .print-tip-icon { font-size: 1.2rem; flex-shrink: 0; }
-    .print-tip-text { font-size: 0.8rem; color: #92400E; line-height: 1.6; }
+    .print-tip-text { font-size: 0.78rem; color: #92400E; line-height: 1.6; }
 
-    /* ===== PDF BUTTON ===== */
-    .btn-pdf {
-      padding: 10px 20px; border-radius: 99px; border: none;
-      background: linear-gradient(135deg, var(--teal), #0891b2); color: white;
-      font-family: 'Heebo', sans-serif; font-size: 0.82rem; font-weight: 700;
-      cursor: pointer; display: flex; align-items: center; gap: 6px;
-      transition: all 0.15s;
-    }
-    .btn-pdf:hover { opacity: 0.88; transform: translateY(-1px); }
-    .btn-pdf:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
-
-    .btn-view-book {
-      padding: 10px 20px; border-radius: 99px; border: none;
-      background: linear-gradient(135deg, var(--purple), #7c3aed); color: white;
-      font-family: 'Heebo', sans-serif; font-size: 0.82rem; font-weight: 700;
-      cursor: pointer; display: flex; align-items: center; gap: 6px;
-      transition: all 0.15s;
-    }
-    .btn-view-book:hover { opacity: 0.88; transform: translateY(-1px); }
-
-    .results-actions { display: flex; gap: 8px; flex-wrap: wrap; }
-
-    /* ===== BOOK VIEWER ===== */
+    /* ── BOOK VIEWER ── */
     .book-overlay {
-      display: none; position: fixed; inset: 0; z-index: 999;
-      background: rgba(15, 10, 30, 0.92); backdrop-filter: blur(8px);
-      align-items: center; justify-content: center; flex-direction: column;
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: rgba(10,8,20,0.95); backdrop-filter: blur(12px);
+      align-items: center; justify-content: center; padding: 16px;
     }
     .book-overlay.open { display: flex; }
-
-    .book-container {
-      position: relative; max-width: 520px; width: 92vw;
+    .book-modal {
+      display: flex; flex-direction: column; align-items: center;
+      width: min(460px, 96vw); max-height: 96vh;
     }
-    .book-close {
-      position: absolute; top: -48px; right: 0;
-      background: rgba(255,255,255,0.15); border: none; color: white;
-      width: 38px; height: 38px; border-radius: 50%; font-size: 1.2rem;
+    .book-topbar {
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 4px 14px;
+    }
+    .book-modal-title { color: white; font-size: 1rem; font-weight: 800; flex: 1; }
+    .book-close-btn {
+      width: 36px; height: 36px; border-radius: 50%; border: none;
+      background: rgba(255,255,255,0.12); color: white; font-size: 1rem;
       cursor: pointer; display: flex; align-items: center; justify-content: center;
-      transition: background 0.15s;
+      transition: background 0.15s; flex-shrink: 0; margin-right: -4px;
     }
-    .book-close:hover { background: rgba(255,255,255,0.3); }
-
-    .book-page {
-      width: 100%; border-radius: 16px; overflow: hidden;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 3px rgba(255,255,255,0.1);
-      aspect-ratio: 3/4; background: white; position: relative;
+    .book-close-btn:hover { background: rgba(255,255,255,0.25); }
+    .book-page-wrapper {
+      width: 100%; background: white; border-radius: 20px;
+      overflow: hidden; box-shadow: 0 40px 80px rgba(0,0,0,0.7);
+      max-height: calc(96vh - 100px); overflow-y: auto;
     }
-    .book-page img {
-      width: 100%; height: 100%; object-fit: contain;
-      display: block; background: white;
+    .book-page-img { width: 100%; aspect-ratio: 3/4; object-fit: contain; display: block; background: #fafafa; }
+    .book-page-story { padding: 18px 22px; direction: rtl; border-top: 1px solid #f0f0f0; }
+    .book-page-text { font-size: 1rem; line-height: 1.85; color: var(--text); font-weight: 500; }
+    .book-page-moral {
+      display: none; margin-top: 12px; padding: 12px 16px;
+      background: #FFFBEB; border: 1.5px solid #FDE68A;
+      border-radius: 12px; font-size: 0.85rem; font-weight: 700; color: #92400E; line-height: 1.6;
     }
-    .book-page-label {
-      position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
-      background: rgba(0,0,0,0.55); color: white; font-size: 0.72rem;
-      font-weight: 700; padding: 4px 14px; border-radius: 99px;
-      font-family: 'Heebo', sans-serif;
-    }
-
-    .book-nav {
-      display: flex; align-items: center; justify-content: center;
-      gap: 20px; margin-top: 20px;
-    }
+    .book-page-moral.show { display: block; }
+    .book-nav-bar { display: flex; align-items: center; gap: 16px; margin-top: 16px; }
     .book-nav-btn {
-      width: 48px; height: 48px; border-radius: 50%; border: none;
-      background: rgba(255,255,255,0.18); color: white; font-size: 1.3rem;
+      width: 46px; height: 46px; border-radius: 50%; border: none;
+      background: rgba(255,255,255,0.14); color: white; font-size: 1.1rem;
       cursor: pointer; display: flex; align-items: center; justify-content: center;
-      transition: background 0.15s; backdrop-filter: blur(4px);
+      transition: all 0.15s;
     }
-    .book-nav-btn:hover { background: rgba(255,255,255,0.32); }
-    .book-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-    .book-counter {
-      color: white; font-size: 0.88rem; font-weight: 700;
-      font-family: 'Heebo', sans-serif; min-width: 60px; text-align: center;
-    }
+    .book-nav-btn:hover:not(:disabled) { background: rgba(255,255,255,0.28); }
+    .book-nav-btn:disabled { opacity: 0.2; cursor: not-allowed; }
+    .book-dots { display: flex; gap: 6px; }
+    .book-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.25); cursor: pointer; transition: all 0.15s; }
+    .book-dot.active { background: white; transform: scale(1.3); }
 
-    /* ===== FOOTER ===== */
-    footer { text-align: center; padding: 32px 24px; color: var(--sub); font-size: 0.78rem; }
+    /* ── FOOTER ── */
+    footer { text-align: center; padding: 40px 24px; color: var(--text-3); font-size: 0.78rem; border-top: 1px solid var(--border); }
 
     @media (max-width: 520px) {
-      .activity-grid { grid-template-columns: 1fr 1fr; }
-      .act-btn:last-child { grid-column: 1 / -1; }
-      .age-row { flex-wrap: wrap; }
-      .age-btn { min-width: calc(50% - 5px); }
+      .option-grid-3 { grid-template-columns: 1fr 1fr; }
+      .option-grid-3 .option-card:last-child { grid-column: 1 / -1; }
+      .book-banner { flex-direction: column; }
+      .hero { padding: 48px 20px 40px; }
+      .hero-preview { gap: 8px; }
+      .preview-card { width: 90px; }
+      .hero-stats { gap: 20px; }
     }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="brand">
-    <div class="brand-icon">🖍️</div>
+  <a class="logo" href="#">
+    <div class="logo-mark">🖍️</div>
     <div>
-      <div class="brand-name">ציורי</div>
-      <div class="brand-tag">דפי פעילות לילדים בלחיצה אחת</div>
+      <div class="logo-text">ציורי</div>
+      <div class="logo-sub">ספרי פעילות לילדים</div>
     </div>
+  </a>
+  <div class="header-right">
+    <span class="badge-free">✨ חינמי לגמרי</span>
   </div>
-  <div class="header-badge">✨ חינמי לגמרי</div>
 </header>
 
-<div class="hero">
-  <span class="hero-deco deco-1">🎨</span>
-  <span class="hero-deco deco-2">🖍️</span>
-  <span class="hero-deco deco-3">✏️</span>
-  <span class="hero-emoji">🖍️</span>
-  <h1>דפי פעילות <span class="highlight">קסומים</span><br/>לילדים שלכם</h1>
-  <p>בחרו נושא, לחצו צור — ותוך שניות יש לכם דף מוכן להדפסה 🖨️</p>
-</div>
+<section class="hero">
+  <div class="hero-blob blob-1"></div>
+  <div class="hero-blob blob-2"></div>
+  <div class="hero-eyebrow">🌟 AI + דמיון = קסם לילדים</div>
+  <h1>ספרי פעילות <em>עם סיפור</em><br/>לילדים שלכם</h1>
+  <p class="hero-sub">בחרו נושא, לחצו צור — ותוך שניות תקבלו ספר פעילות מותאם אישית עם איורים, סיפור, עלילה ומוסר השכל לפי גיל הילד</p>
+  <a href="#creator" class="hero-cta">✏️ צרו ספר עכשיו — בחינם</a>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-num">3 סוגים</div><div class="hero-stat-label">צביעה · נקודות · מבוך</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">כל גיל</div><div class="hero-stat-label">2–12 שנים</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">סיפור + PDF</div><div class="hero-stat-label">מוכן להדפסה</div></div>
+  </div>
+  <div class="hero-preview">
+    <div class="preview-card"><div class="preview-card-img">🦁</div><div class="preview-card-label">אריה האמיץ</div></div>
+    <div class="preview-card"><div class="preview-card-img">🧜</div><div class="preview-card-label">בת ים בים</div></div>
+    <div class="preview-card"><div class="preview-card-img">🚀</div><div class="preview-card-label">המסע לחלל</div></div>
+  </div>
+</section>
 
-<main>
-  <!-- Step 1: Activity Type -->
-  <div class="step-card">
-    <div class="step-header">
-      <div class="step-num">1</div>
-      <div>
-        <div class="step-title">מה נעשה היום?</div>
-        <div class="step-sub">בחרו את סוג הפעילות</div>
-      </div>
+<section class="how-section">
+  <h2 class="section-title">איך זה עובד?</h2>
+  <p class="section-sub">ארבעה צעדים פשוטים לספר שלם</p>
+  <div class="how-grid">
+    <div class="how-step"><div class="how-icon">✏️</div><h3>בחרו נושא</h3><p>אריה, פרפר, חלל — כל מה שדמיונכם מציע</p></div>
+    <div class="how-step"><div class="how-icon">🎨</div><h3>בחרו סוג</h3><p>דף צביעה, חיבור נקודות, או מבוך</p></div>
+    <div class="how-step"><div class="how-icon">✨</div><h3>AI יוצר הכל</h3><p>איורים + סיפור + מוסר השכל מותאם לגיל</p></div>
+    <div class="how-step"><div class="how-icon">🖨️</div><h3>הורידו והדפיסו</h3><p>PDF מוכן — פשוט לחצו הדפס</p></div>
+  </div>
+</section>
+
+<section id="creator">
+  <h2 class="creator-title">צרו ספר חדש</h2>
+  <p class="creator-sub">כל ספר נוצר עם AI ומכיל איורים ייחודיים + סיפור בעברית + מוסר השכל לפי הגיל</p>
+
+  <div class="form-group">
+    <div class="form-label"><span class="form-label-num">1</span> מה הנושא של הספר?</div>
+    <div class="chips" id="theme-chips">
+      <button class="chip" onclick="pickTheme(this,'אריה חמוד בג\'ונגל')">🦁 אריה</button>
+      <button class="chip" onclick="pickTheme(this,'פיל קטן עם חברים')">🐘 פיל</button>
+      <button class="chip" onclick="pickTheme(this,'פרפר בגינה פורחת')">🦋 פרפר</button>
+      <button class="chip" onclick="pickTheme(this,'בת ים מתחת לים')">🧜 בת ים</button>
+      <button class="chip" onclick="pickTheme(this,'חללאי בחלל הגדול')">🚀 חלל</button>
+      <button class="chip" onclick="pickTheme(this,'דרקון ידידותי')">🐉 דרקון</button>
+      <button class="chip" onclick="pickTheme(this,'נסיכה אמיצה בממלכה')">👸 נסיכה</button>
+      <button class="chip" onclick="pickTheme(this,'דינוזאורים חמודים')">🦕 דינוזאור</button>
+      <button class="chip" onclick="pickTheme(this,'כלב חמוד בפארק')">🐶 כלבלב</button>
+      <button class="chip" onclick="pickTheme(this,'חד קרן קסום ביער')">🦄 חד קרן</button>
     </div>
-    <div class="activity-grid">
-      <button class="act-btn active" data-act="coloring" onclick="selectActivity(this)">
-        <span class="act-icon">🎨</span>
-        <div class="act-name">דף צביעה</div>
-        <div class="act-desc">איור לצביעה עם קווים עבים</div>
+    <input class="subject-input" type="text" id="subject" placeholder="או כתבו כל נושא אחר — רכבת קיטור, ילדה עם ארנב, דרקון ורוד..." maxlength="120"/>
+  </div>
+
+  <div class="form-group">
+    <div class="form-label"><span class="form-label-num">2</span> סוג פעילות</div>
+    <div class="option-grid option-grid-3">
+      <button class="option-card active" data-act="coloring" onclick="selectOpt(this,'act')">
+        <span class="option-icon">🎨</span>
+        <div class="option-name">צביעה</div>
+        <div class="option-desc">קווים עבים לצביעה</div>
       </button>
-      <button class="act-btn" data-act="dotted" onclick="selectActivity(this)">
-        <span class="act-icon">🔢</span>
-        <div class="act-name">חיבור נקודות</div>
-        <div class="act-desc">נקודות ממוספרות לחיבור</div>
+      <button class="option-card" data-act="dotted" onclick="selectOpt(this,'act')">
+        <span class="option-icon">🔢</span>
+        <div class="option-name">נקודות</div>
+        <div class="option-desc">חיבור נקודות ממוספרות</div>
       </button>
-      <button class="act-btn" data-act="maze" onclick="selectActivity(this)">
-        <span class="act-icon">🌀</span>
-        <div class="act-name">מבוך</div>
-        <div class="act-desc">מבוך כיפי לפתרון</div>
+      <button class="option-card" data-act="maze" onclick="selectOpt(this,'act')">
+        <span class="option-icon">🌀</span>
+        <div class="option-name">מבוך</div>
+        <div class="option-desc">מבוך כיפי לפתרון</div>
       </button>
     </div>
   </div>
 
-  <!-- Step 2: Subject -->
-  <div class="step-card">
-    <div class="step-header">
-      <div class="step-num">2</div>
-      <div>
-        <div class="step-title">מה הנושא?</div>
-        <div class="step-sub">בחרו מהירה או כתבו בעצמכם</div>
-      </div>
-    </div>
-    <div class="themes-row" id="themes">
-      <button class="theme-chip" onclick="pickTheme(this, '🦁 אריה חמוד')">🦁 אריה</button>
-      <button class="theme-chip" onclick="pickTheme(this, '🐘 פיל עם ידידים')">🐘 פיל</button>
-      <button class="theme-chip" onclick="pickTheme(this, '🦋 פרפר בגינה פורחת')">🦋 פרפרים</button>
-      <button class="theme-chip" onclick="pickTheme(this, '🚂 רכבת קיטור בהרים')">🚂 רכבת</button>
-      <button class="theme-chip" onclick="pickTheme(this, '🧜 בת ים מתחת לים')">🧜 בת ים</button>
-      <button class="theme-chip" onclick="pickTheme(this, '🚀 חללאי ילד בחלל')">🚀 חלל</button>
-      <button class="theme-chip" onclick="pickTheme(this, '🐉 דרקון ידידותי')">🐉 דרקון</button>
-      <button class="theme-chip" onclick="pickTheme(this, '👸 נסיכה בטירה')">👸 נסיכה</button>
-      <button class="theme-chip" onclick="pickTheme(this, '🦕 דינוזאורים חמודים')">🦕 דינוזאורים</button>
-      <button class="theme-chip" onclick="pickTheme(this, '🌊 דגים ואלמוגים בים')">🌊 ים</button>
-    </div>
-    <div class="input-group">
-      <input type="text" id="subject" placeholder="או כתבו נושא משלכם — כלבלב בפארק, חד קרן בעצים..." maxlength="120"/>
-    </div>
-    <div class="input-hint">💡 ניתן לכתוב בעברית או אנגלית</div>
-  </div>
-
-  <!-- Step 3: Age -->
-  <div class="step-card">
-    <div class="step-header">
-      <div class="step-num">3</div>
-      <div>
-        <div class="step-title">גיל הילד/ה</div>
-        <div class="step-sub">נתאים את הרמה בהתאם</div>
-      </div>
-    </div>
-    <div class="age-row">
-      <button class="age-btn" data-age="young" onclick="selectAge(this)">
-        <span class="age-emoji">🐣</span>
-        <div class="age-label">קטנטנים</div>
-        <div class="age-range">גיל 2–4</div>
+  <div class="form-group">
+    <div class="form-label"><span class="form-label-num">3</span> גיל הילד/ה</div>
+    <div class="option-grid option-grid-2">
+      <button class="option-card" data-age="young" onclick="selectOpt(this,'age')">
+        <span class="option-icon">🐣</span>
+        <div class="option-name">קטנטנים</div>
+        <div class="option-desc">2–4 · פשוט מאוד</div>
       </button>
-      <button class="age-btn active" data-age="mid" onclick="selectAge(this)">
-        <span class="age-emoji">🌟</span>
-        <div class="age-label">גדולים קצת</div>
-        <div class="age-range">גיל 5–7</div>
+      <button class="option-card active" data-age="mid" onclick="selectOpt(this,'age')">
+        <span class="option-icon">🌟</span>
+        <div class="option-name">ילדים</div>
+        <div class="option-desc">5–7 · עלילה ורגש</div>
       </button>
-      <button class="age-btn" data-age="older" onclick="selectAge(this)">
-        <span class="age-emoji">🏆</span>
-        <div class="age-label">מאתגרים</div>
-        <div class="age-range">גיל 8+</div>
+      <button class="option-card" data-age="older" onclick="selectOpt(this,'age')">
+        <span class="option-icon">🏆</span>
+        <div class="option-name">גדולים</div>
+        <div class="option-desc">8+ · מורכב ומאתגר</div>
       </button>
     </div>
   </div>
 
-  <!-- Step 4: Count -->
-  <div class="step-card">
-    <div class="step-header">
-      <div class="step-num">4</div>
-      <div>
-        <div class="step-title">כמה דפים?</div>
-        <div class="step-sub">כל דף ייוצר בנפרד עם וריאציה</div>
-      </div>
-    </div>
-    <div class="count-pills">
-      <button class="count-pill active" onclick="setCount(1, this)">1 דף</button>
-      <button class="count-pill" onclick="setCount(2, this)">2 דפים</button>
-      <button class="count-pill" onclick="setCount(4, this)">4 דפים</button>
+  <div class="form-group">
+    <div class="form-label"><span class="form-label-num">4</span> כמה עמודים?</div>
+    <div class="count-row">
+      <button class="count-btn active" onclick="setCount(1,this)">1 עמוד</button>
+      <button class="count-btn" onclick="setCount(2,this)">2 עמודים</button>
+      <button class="count-btn" onclick="setCount(4,this)">4 עמודים</button>
+      <button class="count-btn" onclick="setCount(6,this)">6 עמודים</button>
     </div>
   </div>
 
-  <!-- Generate -->
+  <div class="divider"></div>
+
   <button class="btn-generate" id="gen-btn" onclick="generate()">
-    <span id="gen-icon">✨</span>
-    <span id="gen-text">צרו לי דפים!</span>
+    <span style="font-size:1.4rem">✨</span>
+    <span id="gen-text">צרו ספר</span>
   </button>
 
-  <!-- Progress -->
-  <div class="progress-section" id="progress">
-    <div class="crayon-anim">🖍️</div>
-    <div class="progress-title" id="prog-title">יוצר דפים מדהימים...</div>
-    <div class="progress-sub" id="prog-sub">זה לוקח כ-20-30 שניות</div>
-    <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+  <div class="loading-section" id="loading">
+    <div class="loading-crayon">🖍️</div>
+    <div class="loading-title" id="loading-title">יוצר איורים מדהימים...</div>
+    <div class="loading-sub">זה לוקח כ-20–40 שניות — כדאי לחכות!</div>
+    <div class="loading-steps">
+      <span class="loading-step active" id="step-images">🎨 יוצר איורים</span>
+      <span class="loading-step" id="step-story">📖 כותב סיפור</span>
+      <span class="loading-step" id="step-done">✅ מוכן!</span>
+    </div>
+    <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
   </div>
 
-  <!-- Results -->
   <div class="results-section" id="results">
-    <div class="results-header">
-      <div class="results-title" id="res-title">🎉 מוכן להדפסה!</div>
-      <div class="results-actions">
-        <button class="btn-view-book" onclick="openBook()">📖 קרא כספר</button>
-        <button class="btn-pdf" id="pdf-btn" onclick="downloadPdf()">📄 PDF</button>
-        <button class="btn-download-all" onclick="dlAll()">⬇️ הורד הכל</button>
+    <div class="book-banner">
+      <div class="book-banner-left">
+        <div class="book-banner-title" id="book-title-display">הספר שלכם מוכן!</div>
+        <div class="book-banner-sub" id="book-banner-sub"></div>
+        <div class="story-status-badge story-loading-badge" id="story-status">⏳ כותב סיפור...</div>
       </div>
+      <div class="book-banner-actions">
+        <button class="btn-book btn-book-primary" onclick="openBook()">📖 קרא כספר</button>
+        <button class="btn-book btn-book-secondary" id="pdf-btn" onclick="downloadPdf()">📄 הורד PDF</button>
+      </div>
+    </div>
+
+    <div class="pages-header">
+      <div class="pages-header-title" id="pages-label">העמודים</div>
+      <button class="btn-regen" onclick="generate()">↺ צור שוב</button>
     </div>
     <div class="pages-grid" id="pages-grid"></div>
+
     <div class="print-tip">
-      <div class="print-tip-icon">🖨️</div>
-      <div class="print-tip-text">
-        <b>טיפ להדפסה:</b> הדפיסו על נייר A4 רגיל, בשחור-לבן מספיק! לתוצאה הכי טובה הגדירו "מלא דף" בהגדרות המדפסת.
-      </div>
+      <span style="flex-shrink:0">🖨️</span>
+      <div class="print-tip-text"><b>לתוצאה הכי טובה:</b> הדפיסו על A4 רגיל — שחור-לבן מספיק! הגדירו "התאם לדף" בהגדרות המדפסת.</div>
     </div>
   </div>
-</main>
+</section>
 
-<!-- Book Viewer Overlay -->
-<div class="book-overlay" id="book-overlay" onclick="closeBookOnBg(event)">
-  <div class="book-container">
-    <button class="book-close" onclick="closeBook()">✕</button>
-    <div class="book-page">
-      <img id="book-img" src="" alt=""/>
-      <div class="book-page-label" id="book-label"></div>
+<!-- Book Viewer -->
+<div class="book-overlay" id="book-overlay" onclick="onOverlayClick(event)">
+  <div class="book-modal">
+    <div class="book-topbar">
+      <div class="book-modal-title" id="book-modal-title">הספר שלכם</div>
+      <button class="book-close-btn" onclick="closeBook()">✕</button>
     </div>
-    <div class="book-nav">
-      <button class="book-nav-btn" id="book-prev" onclick="bookNav(-1)">←</button>
-      <div class="book-counter" id="book-counter"></div>
-      <button class="book-nav-btn" id="book-next" onclick="bookNav(1)">→</button>
+    <div class="book-page-wrapper">
+      <img class="book-page-img" id="book-img" src="" alt=""/>
+      <div class="book-page-story">
+        <div class="book-page-text" id="book-text"></div>
+        <div class="book-page-moral" id="book-moral"></div>
+      </div>
+    </div>
+    <div class="book-nav-bar">
+      <button class="book-nav-btn" id="book-prev" onclick="bookNav(1)">→</button>
+      <div class="book-dots" id="book-dots"></div>
+      <button class="book-nav-btn" id="book-next" onclick="bookNav(-1)">←</button>
     </div>
   </div>
 </div>
 
 <footer>
-  🖍️ ציורי — דפי פעילות חינמיים לילדים &nbsp;·&nbsp; נוצר עם ❤️ ובינה מלאכותית
+  🖍️ ציורי — ספרי פעילות חינמיים לילדים &nbsp;·&nbsp; נוצר עם ❤️ ובינה מלאכותית
 </footer>
 
 <script>
-let state = { act: 'coloring', age: 'mid', count: 1 };
+const state = { act: 'coloring', age: 'mid', count: 1 };
 let generatedUrls = [];
+let storyData = null;
+let storyLoading = false;
+let bookPage = 0;
 
-function selectActivity(btn) {
-  document.querySelectorAll('.act-btn').forEach(b => b.classList.remove('active'));
+function selectOpt(btn, group) {
+  const attr = group === 'act' ? '[data-act]' : '[data-age]';
+  btn.closest('.option-grid').querySelectorAll('.option-card').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  state.act = btn.dataset.act;
+  if (group === 'act') state.act = btn.dataset.act;
+  else state.age = btn.dataset.age;
 }
-function selectAge(btn) {
-  document.querySelectorAll('.age-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  state.age = btn.dataset.age;
-}
+
 function setCount(n, btn) {
   state.count = n;
-  document.querySelectorAll('.count-pill').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.count-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
 }
+
 function pickTheme(btn, val) {
-  document.querySelectorAll('.theme-chip').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.chip').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('subject').value = val;
 }
@@ -565,142 +569,261 @@ function pickTheme(btn, val) {
 async function generate() {
   const subject = document.getElementById('subject').value.trim();
   if (!subject) {
-    document.getElementById('subject').focus();
-    document.getElementById('subject').style.borderColor = '#EF4444';
-    setTimeout(() => document.getElementById('subject').style.borderColor = '', 1500);
+    const inp = document.getElementById('subject');
+    inp.focus(); inp.style.borderColor = '#EF4444';
+    setTimeout(() => inp.style.borderColor = '', 1500);
     return;
   }
 
-  generatedUrls = [];
+  generatedUrls = []; storyData = null; storyLoading = false;
   const genBtn = document.getElementById('gen-btn');
   genBtn.disabled = true;
   document.getElementById('gen-text').textContent = 'יוצר...';
-
   document.getElementById('results').classList.remove('show');
-  document.getElementById('progress').classList.add('show');
-  document.getElementById('prog-fill').style.width = '5%';
+  document.getElementById('loading').classList.add('show');
+  setStep('images'); setProgress(5);
 
   try {
     const resp = await fetch('/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ subject, style: state.act, age: state.age, count: state.count })
     });
-    document.getElementById('prog-fill').style.width = '90%';
+    setProgress(75);
     const data = await resp.json();
-
     if (!resp.ok || !data.urls) throw new Error(data.error || 'שגיאה');
 
     generatedUrls = data.urls;
-    document.getElementById('prog-fill').style.width = '100%';
+    setStep('story'); setProgress(85);
+
+    // Generate story in background (don't block showing results)
+    generateStory(subject);
+
+    setProgress(100);
+    await sleep(300);
     renderResults(data.urls, subject);
   } catch (e) {
     alert('שגיאה: ' + e.message);
+    document.getElementById('loading').classList.remove('show');
   } finally {
-    document.getElementById('progress').classList.remove('show');
     genBtn.disabled = false;
-    document.getElementById('gen-text').textContent = 'צרו לי דפים!';
-    document.getElementById('gen-icon').textContent = '✨';
+    document.getElementById('gen-text').textContent = 'צרו ספר';
   }
 }
 
+async function generateStory(subject) {
+  storyLoading = true;
+  setStoryStatus('loading');
+  try {
+    const resp = await fetch('/api/generate-story', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ subject, style: state.act, age: state.age, count: generatedUrls.length })
+    });
+    if (!resp.ok) throw new Error('Story API error');
+    const data = await resp.json();
+    if (data.title && data.pages) {
+      storyData = data;
+      document.getElementById('book-title-display').textContent = '📚 ' + data.title;
+      document.getElementById('book-modal-title').textContent = data.title;
+      setStoryStatus('ready');
+    }
+  } catch (e) {
+    console.warn('Story failed:', e.message);
+    setStoryStatus('error');
+  } finally {
+    storyLoading = false;
+  }
+}
+
+function setStoryStatus(status) {
+  const el = document.getElementById('story-status');
+  el.className = 'story-status-badge';
+  if (status === 'loading') { el.classList.add('story-loading-badge'); el.textContent = '⏳ כותב סיפור...'; }
+  else if (status === 'ready') { el.classList.add('story-ready-badge'); el.textContent = '✅ הסיפור מוכן!'; }
+  else { el.classList.add('story-loading-badge'); el.textContent = '📖 ללא סיפור'; }
+}
+
 function renderResults(urls, subject) {
-  const grid = document.getElementById('pages-grid');
-  const actLabels = { coloring: 'דף צביעה', dotted: 'חיבור נקודות', maze: 'מבוך' };
-  grid.innerHTML = urls.map((url, i) => `
-    <div class="page-card">
-      <img src="${url}" alt="דף ${i+1}" loading="lazy"/>
+  document.getElementById('loading').classList.remove('show');
+  const actLabel = { coloring: 'דפי צביעה', dotted: 'חיבור נקודות', maze: 'מבוכים' }[state.act] || 'עמודים';
+  const ageLabel = { young: 'גיל 2-4', mid: 'גיל 5-7', older: 'גיל 8+' }[state.age];
+  document.getElementById('book-banner-sub').textContent = `${urls.length} ${actLabel} · ${ageLabel}`;
+  document.getElementById('pages-label').textContent = `${urls.length} ${actLabel}`;
+
+  document.getElementById('pages-grid').innerHTML = urls.map((url, i) => `
+    <div class="page-card" onclick="openBookAt(${i})">
+      <img src="${url}" alt="עמוד ${i+1}" loading="lazy"/>
       <div class="page-card-footer">
-        <span class="page-label">${actLabels[state.act] || 'דף'} ${i+1}</span>
-        <a href="${url}" download="tziyuri-${i+1}.png" class="btn-dl" target="_blank">⬇️ הורד</a>
+        <span class="page-card-num">עמוד ${i+1}</span>
+        <a href="${url}" download="tziyuri-${i+1}.png" class="page-card-dl" onclick="event.stopPropagation()">⬇️</a>
       </div>
     </div>`).join('');
 
-  document.getElementById('res-title').textContent = `🎉 ${urls.length} ${urls.length === 1 ? 'דף מוכן' : 'דפים מוכנים'} להדפסה!`;
   document.getElementById('results').classList.add('show');
   document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-async function dlAll() {
-  for (let i = 0; i < generatedUrls.length; i++) {
-    const a = document.createElement('a');
-    a.href = generatedUrls[i];
-    a.download = `tziyuri-page-${i+1}.png`;
-    a.target = '_blank';
-    a.click();
-    await new Promise(r => setTimeout(r, 400));
-  }
-}
-
-async function downloadPdf() {
+// ── BOOK VIEWER ──
+function openBook() { openBookAt(0); }
+function openBookAt(page) {
   if (!generatedUrls.length) return;
-  const btn = document.getElementById('pdf-btn');
-  btn.disabled = true;
-  btn.textContent = '⏳ יוצר PDF...';
-  try {
-    const subject = document.getElementById('subject').value.trim() || 'My Coloring Book';
-    const resp = await fetch('/api/generate-pdf', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ urls: generatedUrls, title: subject })
-    });
-    if (!resp.ok) throw new Error('שגיאה ביצירת PDF');
-    const blob = await resp.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'tziyuri-coloring-book.pdf';
-    a.click();
-    URL.revokeObjectURL(url);
-  } catch (e) {
-    alert('שגיאה: ' + e.message);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = '📄 PDF';
-  }
-}
-
-// ===== BOOK VIEWER =====
-let bookPage = 0;
-
-function openBook() {
-  if (!generatedUrls.length) return;
-  bookPage = 0;
-  renderBookPage();
+  bookPage = page;
+  buildDots();
+  showBookPage();
   document.getElementById('book-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-
 function closeBook() {
   document.getElementById('book-overlay').classList.remove('open');
   document.body.style.overflow = '';
 }
+function onOverlayClick(e) { if (e.target === e.currentTarget) closeBook(); }
 
-function closeBookOnBg(e) {
-  if (e.target === document.getElementById('book-overlay')) closeBook();
+function buildDots() {
+  document.getElementById('book-dots').innerHTML = generatedUrls.map((_,i) =>
+    `<div class="book-dot${i===bookPage?' active':''}" onclick="goToPage(${i})"></div>`).join('');
 }
+function goToPage(n) { bookPage=n; buildDots(); showBookPage(); }
 
-function renderBookPage() {
+function showBookPage() {
   const total = generatedUrls.length;
-  const actLabels = { coloring: 'דף צביעה', dotted: 'חיבור נקודות', maze: 'מבוך' };
-  const label = (actLabels[state.act] || 'דף') + ' ' + (bookPage + 1);
   document.getElementById('book-img').src = generatedUrls[bookPage];
-  document.getElementById('book-label').textContent = label;
-  document.getElementById('book-counter').textContent = `${bookPage + 1} / ${total}`;
-  document.getElementById('book-prev').disabled = bookPage === 0;
-  document.getElementById('book-next').disabled = bookPage === total - 1;
+  document.getElementById('book-prev').disabled = bookPage >= total - 1;
+  document.getElementById('book-next').disabled = bookPage <= 0;
+
+  const textEl = document.getElementById('book-text');
+  if (storyData?.pages?.[bookPage]?.text) {
+    textEl.textContent = storyData.pages[bookPage].text;
+  } else if (storyLoading) {
+    textEl.innerHTML = '<span style="color:#9CA3AF;font-style:italic">✍️ כותב סיפור...</span>';
+  } else {
+    textEl.textContent = '';
+  }
+
+  const moralEl = document.getElementById('book-moral');
+  if (bookPage === total - 1 && storyData?.moral) {
+    moralEl.textContent = '⭐ ' + storyData.moral;
+    moralEl.classList.add('show');
+  } else {
+    moralEl.classList.remove('show');
+  }
+
+  document.getElementById('book-modal-title').textContent = storyData?.title || document.getElementById('subject').value;
 }
 
 function bookNav(dir) {
-  bookPage = Math.max(0, Math.min(generatedUrls.length - 1, bookPage + dir));
-  renderBookPage();
+  const next = bookPage + dir;
+  if (next < 0 || next >= generatedUrls.length) return;
+  bookPage = next;
+  buildDots();
+  showBookPage();
 }
 
 document.addEventListener('keydown', e => {
   if (!document.getElementById('book-overlay').classList.contains('open')) return;
-  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') bookNav(e.key === 'ArrowLeft' ? 1 : -1);
+  if (e.key === 'ArrowLeft') bookNav(-1);
+  if (e.key === 'ArrowRight') bookNav(1);
   if (e.key === 'Escape') closeBook();
 });
+
+// ── PDF ──
+async function downloadPdf() {
+  if (!generatedUrls.length) return;
+  const btn = document.getElementById('pdf-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ מכין...';
+
+  if (storyLoading) {
+    btn.textContent = '⏳ ממתין לסיפור...';
+    let waited = 0;
+    while (storyLoading && waited < 15000) { await sleep(500); waited += 500; }
+  }
+
+  try {
+    const { jsPDF } = window.jspdf;
+    const W = 794, H = 1123;
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+    const subject = document.getElementById('subject').value.trim();
+    const story = storyData;
+    const total = generatedUrls.length;
+    const emoji = getEmoji(subject);
+
+    const frame = document.createElement('div');
+    frame.style.cssText = `position:fixed;left:-9999px;top:0;width:${W}px;overflow:hidden;background:white;font-family:Heebo,sans-serif;`;
+    document.body.appendChild(frame);
+
+    // Cover
+    frame.innerHTML = `<div style="width:${W}px;height:${H}px;background:linear-gradient(160deg,#FF6B35,#c44a1f);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 80px;">
+      <div style="font-size:100px;margin-bottom:24px;">${emoji}</div>
+      <div style="font-size:58px;font-weight:900;color:white;text-align:center;direction:rtl;line-height:1.15;margin-bottom:16px;">${story?.title || subject}</div>
+      ${story?.subtitle ? `<div style="font-size:26px;color:rgba(255,255,255,0.8);text-align:center;direction:rtl;margin-bottom:24px;">${story.subtitle}</div>` : ''}
+      <div style="margin-top:40px;font-size:18px;color:rgba(255,255,255,0.65);direction:rtl;">ספר פעילות · ${total} עמודים</div>
+    </div>`;
+    const c0 = await html2canvas(frame.firstElementChild, { scale: 1, backgroundColor: '#FF6B35', width: W, height: H });
+    doc.addImage(c0.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, 595, 842);
+
+    for (let i = 0; i < total; i++) {
+      btn.textContent = `⏳ עמוד ${i+1}/${total}...`;
+      const text = story?.pages?.[i]?.text || '';
+      const isLast = i === total - 1;
+      const src = `/api/proxy-image?url=${encodeURIComponent(generatedUrls[i])}`;
+
+      frame.innerHTML = `<div style="width:${W}px;height:${H}px;background:white;padding:40px 52px;box-sizing:border-box;direction:rtl;position:relative;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:7px;height:48px;background:#FF6B35;border-radius:4px;"></div>
+            <div style="font-size:30px;font-weight:900;color:#111827;">${story?.title || subject}</div>
+          </div>
+          <div style="font-size:20px;font-weight:700;color:#9CA3AF;">${i+1} / ${total}</div>
+        </div>
+        <img src="${src}" style="width:100%;height:560px;object-fit:contain;display:block;border-radius:16px;background:#FAFAFA;"/>
+        ${text ? `<p style="font-size:24px;line-height:1.9;color:#111827;margin-top:24px;text-align:right;font-weight:500;">${text}</p>` : ''}
+        ${isLast && story?.moral ? `<div style="background:#FFFBEB;border:2px solid #FDE68A;border-radius:14px;padding:18px 24px;margin-top:18px;font-size:21px;font-weight:800;color:#92400E;direction:rtl;">⭐ ${story.moral}</div>` : ''}
+        <div style="position:absolute;bottom:24px;left:0;right:0;text-align:center;font-size:14px;color:#D1D5DB;direction:ltr;">ציורי · tziyuri.app</div>
+      </div>`;
+
+      await new Promise(res => {
+        const img = frame.querySelector('img');
+        if (img.complete && img.naturalHeight) res();
+        else { img.onload = res; img.onerror = res; setTimeout(res, 10000); }
+      });
+
+      const canvas = await html2canvas(frame.firstElementChild, {
+        scale: 1, useCORS: true, allowTaint: false, backgroundColor: '#ffffff', width: W, height: H
+      });
+      doc.addPage();
+      doc.addImage(canvas.toDataURL('image/jpeg', 0.92), 'JPEG', 0, 0, 595, 842);
+    }
+
+    document.body.removeChild(frame);
+    const name = (story?.title || subject || 'tziyuri').replace(/[^\u05D0-\u05EAa-zA-Z0-9 ]/g,'').trim().replace(/ +/g,'-');
+    doc.save(name + '.pdf');
+  } catch (e) {
+    console.error(e);
+    alert('שגיאה ביצירת PDF: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '📄 הורד PDF';
+  }
+}
+
+function getEmoji(subject) {
+  const map = [['אריה','🦁'],['פיל','🐘'],['פרפר','🦋'],['בת ים','🧜'],['חלל','🚀'],['דרקון','🐉'],['נסיכה','👸'],['דינוזאור','🦕'],['כלב','🐶'],['חד קרן','🦄'],['רכבת','🚂'],['דג','🐟'],['ג\'ירפה','🦒'],['פרה','🐄'],['חתול','🐱'],['ארנב','🐰']];
+  for (const [k,v] of map) if (subject.includes(k)) return v;
+  return '📚';
+}
+
+function setStep(step) {
+  const steps = ['images','story','done'];
+  const idx = steps.indexOf(step);
+  steps.forEach((s,i) => {
+    const el = document.getElementById('step-' + s);
+    el.classList.remove('active','done');
+    if (i < idx) el.classList.add('done');
+    else if (i === idx) el.classList.add('active');
+  });
+}
+function setProgress(pct) { document.getElementById('progress-bar').style.width = pct + '%'; }
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 </script>
 </body>
 </html>
